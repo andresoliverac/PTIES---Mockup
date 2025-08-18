@@ -210,7 +210,7 @@ export default function IESDashboard() {
   }, [iesFiltro, municipioFiltro, generoFiltro, tipoActividad, compAsis]);
 
   return (
-    <div className="min-h-screen w-full p-6 md:p-10 space-y-6 bg-neutral-50 text-[#4a5570]">
+    <div className="min-h-screen w-full p-6 md:p-10 space-y-6 bg-[#f6f6f6] text-[#4a5570]">
       {/* Header + Filtros globales (Periodo / Fechas / IES / Municipio / Género) */}
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>

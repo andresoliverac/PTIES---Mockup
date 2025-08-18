@@ -87,7 +87,7 @@ export default function MENDashboard() {
   const pctEntregables = pct(totEntregados, totEntregables);
 
   return (
-    <div className="min-h-screen w-full p-6 md:p-10 space-y-6 bg-neutral-50 text-[#4a5570]">
+    <div className="min-h-screen w-full p-6 md:p-10 space-y-6 bg-[#f6f6f6] text-[#4a5570]">
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
@@ -298,8 +298,8 @@ export default function MENDashboard() {
       </div>
 
       {/* Second row: mapa detalle + transición */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <Card className="rounded-2xl xl:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="rounded-2xl lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-[#4a5570]">Mapa por municipio (estático)</CardTitle>
             <CardDescription>Color por estado de avance (ejemplo)</CardDescription>
@@ -336,7 +336,7 @@ export default function MENDashboard() {
       </div>
 
       {/* Third row: permanencia / timeline / gobernanza */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="rounded-2xl">
           <CardHeader>
             <CardTitle className="text-[#4a5570]">Permanencia</CardTitle>
