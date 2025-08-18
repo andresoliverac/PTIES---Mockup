@@ -25,7 +25,7 @@ export default function IESLanding() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Gestión de Documentos Option */}
-          <Card className="rounded-2xl hover:shadow-lg transition-all duration-300 border-2 hover:border-[#4a5570]/20">
+          <Card className="rounded-2xl hover:shadow-lg transition-all duration-300 border-2 hover:border-[#4a5570]/20 flex flex-col h-full">
             <CardHeader className="text-center pb-4">
               <div className="w-20 h-20 bg-[#4a5570]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <FolderOpen className="w-10 h-10 text-[#4a5570]" />
@@ -35,8 +35,8 @@ export default function IESLanding() {
                 Administra, sube y organiza todos los documentos relacionados con el programa PTIES
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
+            <CardContent className="space-y-4 flex-1 flex flex-col">
+              <div className="space-y-3 flex-1">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-[#4a5570] rounded-full"></div>
                   <span className="text-[#4a5570]/80">Subida de planes educativos</span>
@@ -51,7 +51,7 @@ export default function IESLanding() {
                 </div>
               </div>
               
-              <div className="pt-4">
+              <div className="pt-4 mt-auto">
                 <Link to="/gestion-documentos">
                   <Button className="w-full bg-[#4a5570] hover:bg-[#3a4560] text-white rounded-2xl py-6 text-lg font-medium">
                     Ir a Gestión de Documentos
@@ -62,7 +62,7 @@ export default function IESLanding() {
           </Card>
 
           {/* Gestión de Actividades Option */}
-          <Card className="rounded-2xl hover:shadow-lg transition-all duration-300 border-2 hover:border-[#4a5570]/20">
+          <Card className="rounded-2xl hover:shadow-lg transition-all duration-300 border-2 hover:border-[#4a5570]/20 flex flex-col h-full">
             <CardHeader className="text-center pb-4">
               <div className="w-20 h-20 bg-[#4a5570]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Calendar className="w-10 h-10 text-[#4a5570]" />
@@ -72,8 +72,8 @@ export default function IESLanding() {
                 Crea, programa y administra las actividades del programa PTIES
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
+            <CardContent className="space-y-4 flex-1 flex flex-col">
+              <div className="space-y-3 flex-1">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-[#4a5570] rounded-full"></div>
                   <span className="text-[#4a5570]/80">Crear nuevas actividades</span>
@@ -88,7 +88,7 @@ export default function IESLanding() {
                 </div>
               </div>
               
-              <div className="pt-4">
+              <div className="pt-4 mt-auto">
                 <Link to="/gestion-actividades">
                   <Button className="w-full bg-[#4a5570] hover:bg-[#3a4560] text-white rounded-2xl py-6 text-lg font-medium">
                     Ir a Gestión de Actividades
@@ -99,7 +99,7 @@ export default function IESLanding() {
           </Card>
 
           {/* Monitoreo Option */}
-          <Card className="rounded-2xl hover:shadow-lg transition-all duration-300 border-2 hover:border-[#4a5570]/20">
+          <Card className="rounded-2xl hover:shadow-lg transition-all duration-300 border-2 hover:border-[#4a5570]/20 flex flex-col h-full">
             <CardHeader className="text-center pb-4">
               <div className="w-20 h-20 bg-[#4a5570]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="w-10 h-10 text-[#4a5570]" />
@@ -109,8 +109,8 @@ export default function IESLanding() {
                 Accede a dashboards, métricas y análisis detallados del progreso de tu institución
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
+            <CardContent className="space-y-4 flex-1 flex flex-col">
+              <div className="space-y-3 flex-1">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-[#4a5570] rounded-full"></div>
                   <span className="text-[#4a5570]/80">Panel de control institucional</span>
@@ -129,7 +129,7 @@ export default function IESLanding() {
                 </div>
               </div>
               
-              <div className="pt-4">
+              <div className="pt-4 mt-auto">
                 <Link to="/ies-dashboard">
                   <Button className="w-full bg-[#4a5570] hover:bg-[#3a4560] text-white rounded-2xl py-6 text-lg font-medium">
                     Ir a Monitoreo

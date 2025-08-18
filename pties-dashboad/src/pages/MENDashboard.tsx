@@ -5,15 +5,14 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Progress } from "../components/ui/progress";
-import { AlertCircle, Calendar, Map as MapIcon, FileText, Activity, School, Users, Building, AlertTriangle, TrendingUp, ClipboardList } from "lucide-react";
+import { AlertCircle, Calendar, FileText, Activity, School, Users, Building, AlertTriangle, TrendingUp, ClipboardList } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import ColombiaMap, { type BubbleMetric } from "../components/ColombiaMap";
 
 // --- Dummy data ---
 const kpis = [
   { label: "Estudiantes", value: 480, icon: Users },
   { label: "Colegios (IEM)", value: 20, icon: School },
-  { label: "Regiones/Municipios", value: 5, icon: MapIcon },
+  { label: "Regiones/Municipios", value: 5, icon: Building },
   { label: "IES", value: 26, icon: Building },
   { label: "Personal IES", value: 20, icon: Activity },
 ];
@@ -61,7 +60,6 @@ export function pct(n: number, d: number) {
 }
 
 export default function MENDashboard() {
-  const [bubbleMetric, setBubbleMetric] = useState<BubbleMetric>('students');
   const [sexFilter, setSexFilter] = useState<string>('todos');
   const [regionFilter, setRegionFilter] = useState<string>('todas');
   const [periodoFilter, setPeriodoFilter] = useState<string>('2025-02');
@@ -101,7 +99,7 @@ export default function MENDashboard() {
       {/* Header with Title */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex-1">
-          <h1 className="text-3xl font-semibold tracking-tight">PTIES – MEN Dashboard Global </h1>
+          <h1 className="text-3xl font-semibold tracking-tight">PTIES – MEN Dashboard</h1>
           <p className="text-sm text-[#4a5570]/70">Visión global del programa, riesgos y resultados. (Ejemplo UI)</p>
         </div>
       </div>
@@ -278,8 +276,8 @@ export default function MENDashboard() {
                     <YAxis stroke="#4a5570" />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="total" stroke="#4a5570" />
-                    <Line type="monotone" dataKey="cumplidas" stroke="#3a455e" />
+                    <Line type="monotone" dataKey="total" stroke="#4a5570" strokeWidth={2} />
+                    <Line type="monotone" dataKey="cumplidas" stroke="#4a5570" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -291,8 +289,12 @@ export default function MENDashboard() {
         <div className="space-y-6">
           <Card className="rounded-2xl h-80">
             <CardHeader>
-              <CardTitle className="text-[#4a5570]">Impacto en Aprendizajes</CardTitle>
-              <CardDescription className="text-[#4a5570]/70">Diagnóstico vs. Formativas vs. Acumulada</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-[#4a5570]">Evaluaciones por competencia</CardTitle>
+                  <CardDescription>Todas las competencias</CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="h-56">
               <ResponsiveContainer width="100%" height="100%">
@@ -301,9 +303,27 @@ export default function MENDashboard() {
                   <YAxis stroke="#4a5570" />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="socioemo" name="Socioemocional" stroke="#4a5570" />
-                  <Line type="monotone" dataKey="matem" name="Matemáticas" stroke="#3a455e" />
-                  <Line type="monotone" dataKey="lenguaje" name="Lenguaje" stroke="#6c738a" />
+                  <Line 
+                    type="monotone" 
+                    dataKey="matem" 
+                    name="Matemáticas" 
+                    stroke="#4a5570" 
+                    strokeWidth={2} 
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="lenguaje" 
+                    name="Lenguaje" 
+                    stroke="#2c3e50" 
+                    strokeWidth={2} 
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="socioemo" 
+                    name="Socio-emocional" 
+                    stroke="#27ae60" 
+                    strokeWidth={2} 
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -374,52 +394,6 @@ export default function MENDashboard() {
             </CardContent>
           </Card>
         </div>
-      </div>
-
-      {/* Second row: mapa detalle */}
-      <div className="grid grid-cols-1 gap-6">
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-50">
-              <div>
-                <CardTitle className="text-[#4a5570]">Mapa por municipio - Colombia</CardTitle>
-                <CardDescription>Progreso por región con indicadores visuales (interactivo)</CardDescription>
-              </div>
-              <div className="flex items-center gap-2 relative z-50">
-                <label className="text-sm font-medium text-[#4a5570]">Tamaño de burbuja:</label>
-                <div className="relative z-50">
-                  <Select value={bubbleMetric} onValueChange={(value: BubbleMetric) => setBubbleMetric(value)}>
-                    <SelectTrigger className="w-48 relative z-50">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="relative z-[9999] bg-white shadow-lg border">
-                      <SelectItem value="students">Número de Estudiantes</SelectItem>
-                      <SelectItem value="schools">Número de Colegios</SelectItem>
-                      <SelectItem value="avgScore">Puntaje Promedio</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="h-96 w-full rounded-xl overflow-hidden border bg-gray-50 relative z-10">
-              <ColombiaMap bubbleMetric={bubbleMetric} />
-            </div>
-            <div className="mt-4 flex justify-between items-center">
-              <div className="text-sm text-[#4a5570]/70">
-                Haz clic en los marcadores para ver información detallada de cada región
-              </div>
-              <div className="text-xs text-[#4a5570]/70 font-medium">
-                Tamaño de burbuja basado en: {
-                  bubbleMetric === 'students' ? 'Número de Estudiantes' :
-                  bubbleMetric === 'schools' ? 'Número de Colegios' :
-                  'Puntaje Promedio de Evaluaciones'
-                }
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Footer actions */}

@@ -27,7 +27,7 @@ export default function Navigation() {
               className={location.pathname === "/men-global" ? "bg-[#4a5570] text-white" : "text-[#4a5570]"}
             >
               <Globe className="w-4 h-4 mr-2" />
-              MEN Dashboard Global
+              MEN
             </Button>
           </Link>
         </div>

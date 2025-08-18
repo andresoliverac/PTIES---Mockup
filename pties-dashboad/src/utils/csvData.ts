@@ -11,6 +11,7 @@ export interface Deliverable {
   ies: string;
   necesitaRevision: string;
   aprobado: string; // New approval column
+  categoria: string; // New category column
 }
 
 // More robust CSV parser that handles quoted fields with newlines and commas
@@ -39,6 +40,19 @@ const parseCSVLine = (line: string): string[] => {
 };
 
 export const parseCSV = (csvText: string): Deliverable[] => {
+  // Helper function to assign random categories
+  const getRandomCategory = (): string => {
+    const categories = [
+      'plan-estudios',
+      'plan-accion', 
+      'asistencia',
+      'diagnosticos',
+      'evaluaciones',
+      'otros'
+    ];
+    return categories[Math.floor(Math.random() * categories.length)];
+  };
+
   // Handle multi-line fields by first processing line breaks within quotes
   let processedText = '';
   let inQuotes = false;
@@ -71,7 +85,8 @@ export const parseCSV = (csvText: string): Deliverable[] => {
       fechaEntrega: (values[7] || '').trim(),
       ies: (values[8] || '').trim(),
       necesitaRevision: (values[9] || '').trim(),
-      aprobado: (values[10] || Math.random() > 0.5 ? 'Sí' : 'No').trim() // Random approval for demo
+      aprobado: (values[10] || Math.random() > 0.5 ? 'Sí' : 'No').trim(), // Random approval for demo
+      categoria: getRandomCategory() // Assign random category
     };
   }).filter(deliverable => 
     // Filter out rows that have no meaningful content

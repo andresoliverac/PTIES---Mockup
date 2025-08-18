@@ -116,15 +116,7 @@ const estudiantesBase = [
   { id: "ST006", nombre: "Sofía Restrepo", genero: "F", municipio: "Bello", ies: "IES Sabana", asistenciaProm: 96, matematicas: 76, lenguaje: 82, socioemocional: 75 },
 ];
 
-// Asistencia por estudiante en actividades (clases u otras)
-const asistenciaEstudiantes = [
-  { id: "ST001", estudiante: "Juan Pérez", ies: "IES Andes", municipio: "Medellín", genero: "M", fecha: "2025-03-10", actividad: "Clase", competencia: "Matemáticas", asistio: true, observacion: "" },
-  { id: "ST002", estudiante: "María López", ies: "IES Andes", municipio: "Medellín", genero: "F", fecha: "2025-03-12", actividad: "Taller", competencia: "Lenguaje", asistio: true, observacion: "Llegó tarde" },
-  { id: "ST003", estudiante: "Carlos Ruiz", ies: "IES Pacífico", municipio: "Envigado", genero: "M", fecha: "2025-03-15", actividad: "Clase", competencia: "-", asistio: false, observacion: "Excusa médica" },
-  { id: "ST004", estudiante: "Laura Gómez", ies: "IES Sabana", municipio: "Bello", genero: "F", fecha: "2025-03-18", actividad: "Extracurricular", competencia: "Socioemocional", asistio: true, observacion: "" },
-  { id: "ST005", estudiante: "Andrés Mejía", ies: "IES Pacífico", municipio: "Envigado", genero: "M", fecha: "2025-04-01", actividad: "Clase", competencia: "Matemáticas", asistio: true, observacion: "" },
-  { id: "ST006", estudiante: "Sofía Restrepo", ies: "IES Sabana", municipio: "Bello", genero: "F", fecha: "2025-04-03", actividad: "Taller", competencia: "Lenguaje", asistio: true, observacion: "" },
-];
+// Datos de estudiantes para tablas
 
 // ------------------ Component ------------------
 export default function IESDashboard() {
@@ -147,15 +139,11 @@ export default function IESDashboard() {
   const [generoFiltro, setGeneroFiltro] = useState<string>("Todos");
 
   // Filtros específicos de Estudiantes (fixed values since filters were removed)
-  const evalFiltro = "Eval2"; // Default to Eval2
-  const compFiltro = "Matemáticas"; // Default to Matemáticas
+  const [evalFiltro, setEvalFiltro] = useState<string>("Eval2"); // Now configurable
+  const [compFiltro, setCompFiltro] = useState<string>("Matemáticas"); // Now configurable
 
   // Estado gráfico evaluaciones - metric selector (Promedio or Mediana)
   const [metricaEval, setMetricaEval] = useState<"promedio" | "mediana">("promedio");
-
-  // Filtros locales para asistencia por estudiante
-  const [tipoActividad, setTipoActividad] = useState<string>("Todas");
-  const [compAsis, setCompAsis] = useState<string>("Todas");
 
   const cortes = Object.keys(pruebasPorCorte);
   const seriePromedio = cortes.map((c) => ({ corte: c, promedio: mean(pruebasPorCorte[c]) }));
@@ -207,16 +195,89 @@ export default function IESDashboard() {
     });
   }, [estudiantesFiltrados, compFiltro, evalFiltro, cortes]);
 
-  // Filtrado de asistencia por estudiante (actividades)
-  const asisFiltrada = useMemo(() => {
-    return asistenciaEstudiantes.filter((r) =>
-      (iesFiltro === "Todas" || r.ies === iesFiltro) &&
-      (municipioFiltro === "Todos" || r.municipio === municipioFiltro) &&
-      (generoFiltro === "Todos" || r.genero === generoFiltro) &&
-      (tipoActividad === "Todas" || r.actividad === tipoActividad) &&
-      (compAsis === "Todas" || r.competencia === compAsis)
-    );
-  }, [iesFiltro, municipioFiltro, generoFiltro, tipoActividad, compAsis]);
+  // Agrupar datos por IE y Sede para las tablas
+  const resumenPorIESede = useMemo(() => {
+    const agrupados = estudiantesFiltrados.reduce((acc, estudiante) => {
+      const key = `${estudiante.ies}-${estudiante.municipio}`;
+      if (!acc[key]) {
+        acc[key] = {
+          ies: estudiante.ies,
+          municipio: estudiante.municipio,
+          sede: colegios.find(c => c.municipio === estudiante.municipio)?.sede || "Principal",
+          estudiantes: [],
+          totalEstudiantes: 0,
+          asistenciaPromedio: 0,
+          matematicas: 0,
+          lenguaje: 0,
+          socioemocional: 0
+        };
+      }
+      acc[key].estudiantes.push(estudiante);
+      return acc;
+    }, {} as Record<string, any>);
+
+    return Object.values(agrupados).map((grupo: any) => {
+      const totalEstudiantes = grupo.estudiantes.length;
+      const asistenciaPromedio = Math.round(grupo.estudiantes.reduce((sum: number, e: any) => sum + e.asistenciaProm, 0) / totalEstudiantes);
+      const matematicas = Math.round(grupo.estudiantes.reduce((sum: number, e: any) => sum + e.matematicas, 0) / totalEstudiantes);
+      const lenguaje = Math.round(grupo.estudiantes.reduce((sum: number, e: any) => sum + e.lenguaje, 0) / totalEstudiantes);
+      const socioemocional = Math.round(grupo.estudiantes.reduce((sum: number, e: any) => sum + e.socioemocional, 0) / totalEstudiantes);
+      
+      return {
+        ies: grupo.ies,
+        sede: grupo.sede,
+        municipio: grupo.municipio,
+        totalEstudiantes,
+        asistenciaPromedio,
+        matematicas,
+        lenguaje,
+        socioemocional,
+        puntajeGlobal: Math.round((matematicas + lenguaje + socioemocional) / 3)
+      };
+    });
+  }, [estudiantesFiltrados]);
+
+  // Agrupar detalle por evaluación/competencia por IE y Sede
+  const detalleEvaluacionPorIESede = useMemo(() => {
+    const agrupados = detalleEvaluacion.reduce((acc, detalle) => {
+      const key = `${detalle.ies}-${detalle.municipio}`;
+      if (!acc[key]) {
+        acc[key] = {
+          ies: detalle.ies,
+          municipio: detalle.municipio,
+          sede: colegios.find(c => c.municipio === detalle.municipio)?.sede || "Principal",
+          detalles: []
+        };
+      }
+      acc[key].detalles.push(detalle);
+      return acc;
+    }, {} as Record<string, any>);
+
+    return Object.values(agrupados).map((grupo: any) => {
+      const detalles = grupo.detalles;
+      const totalEstudiantes = detalles.length;
+      const preguntasPromedio = Math.round(detalles.reduce((sum: number, d: any) => sum + d.preguntas, 0) / totalEstudiantes);
+      const correctasPromedio = Math.round(detalles.reduce((sum: number, d: any) => sum + d.correctas, 0) / totalEstudiantes);
+      const puntajePromedio = Math.round(detalles.reduce((sum: number, d: any) => sum + d.puntaje, 0) / totalEstudiantes);
+      
+      return {
+        ies: grupo.ies,
+        sede: grupo.sede,
+        municipio: grupo.municipio,
+        totalEstudiantes,
+        evaluacion: evalFiltro,
+        competencia: compFiltro,
+        preguntas: preguntasPromedio,
+        correctas: correctasPromedio,
+        erroneas: preguntasPromedio - correctasPromedio,
+        puntaje: puntajePromedio,
+        sub1: detalles[0]?.sub1 || "",
+        sub2: detalles[0]?.sub2 || "",
+        descripcion: `Evaluación ${evalFiltro} – ${compFiltro}`,
+        fecha: detalles[0]?.fecha || "2025-06-15"
+      };
+    });
+  }, [detalleEvaluacion, evalFiltro, compFiltro]);
 
   return (
     <div className="min-h-screen w-full p-6 md:p-10 space-y-6 bg-[#f6f6f6] text-[#4a5570]">
@@ -532,22 +593,22 @@ export default function IESDashboard() {
             </Card>
           </div>
 
-          {/* Tabla: Estudiantes (promedios y componentes) */}
+          {/* Tabla: Resumen por IE y Sede */}
           <Card className="rounded-2xl">
             <CardHeader>
               <div>
-                <CardTitle className="text-[#4a5570]">Resumen por estudiante</CardTitle>
-                <CardDescription>Asistencia promedio y puntajes por componente</CardDescription>
+                <CardTitle className="text-[#4a5570]">Resumen por IE y Sede</CardTitle>
+                <CardDescription>Asistencia promedio y puntajes por competencia agrupados por institución</CardDescription>
               </div>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Estudiante</TableHead>
                     <TableHead>IES</TableHead>
+                    <TableHead>Sede</TableHead>
                     <TableHead>Municipio</TableHead>
-                    <TableHead>Género</TableHead>
+                    <TableHead>Total Estudiantes</TableHead>
                     <TableHead>Asistencia %</TableHead>
                     <TableHead>Matemáticas</TableHead>
                     <TableHead>Lenguaje</TableHead>
@@ -556,17 +617,17 @@ export default function IESDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {estudiantesFiltrados.map((e) => (
-                    <TableRow key={e.id}>
-                      <TableCell>{e.nombre}</TableCell>
-                      <TableCell>{e.ies}</TableCell>
-                      <TableCell>{e.municipio}</TableCell>
-                      <TableCell>{e.genero}</TableCell>
-                      <TableCell>{e.asistenciaProm}</TableCell>
-                      <TableCell>{e.matematicas}</TableCell>
-                      <TableCell>{e.lenguaje}</TableCell>
-                      <TableCell>{e.socioemocional}</TableCell>
-                      <TableCell>{Math.round((e.matematicas + e.lenguaje + e.socioemocional)/3)}</TableCell>
+                  {resumenPorIESede.map((r, index) => (
+                    <TableRow key={`${r.ies}-${r.municipio}-${index}`}>
+                      <TableCell>{r.ies}</TableCell>
+                      <TableCell>{r.sede}</TableCell>
+                      <TableCell>{r.municipio}</TableCell>
+                      <TableCell>{r.totalEstudiantes}</TableCell>
+                      <TableCell>{r.asistenciaPromedio}</TableCell>
+                      <TableCell>{r.matematicas}</TableCell>
+                      <TableCell>{r.lenguaje}</TableCell>
+                      <TableCell>{r.socioemocional}</TableCell>
+                      <TableCell>{r.puntajeGlobal}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -574,20 +635,52 @@ export default function IESDashboard() {
             </CardContent>
           </Card>
 
-          {/* Tabla: Detalle por evaluación/competencia */}
+          {/* Tabla: Detalle por evaluación/competencia agrupado por IE y Sede */}
           <Card className="rounded-2xl">
             <CardHeader>
-              <CardTitle className="text-[#4a5570]">Detalle por estudiante – {compFiltro} / {evalFiltro}</CardTitle>
-              <CardDescription>Número de preguntas, correctas, puntaje y subcompetencias</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-[#4a5570]">Detalle por IE y Sede – {compFiltro} / {evalFiltro}</CardTitle>
+                  <CardDescription>Promedios por institución de preguntas, correctas, puntaje y subcompetencias</CardDescription>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-[#4a5570]/70">Competencia:</label>
+                    <Select value={compFiltro} onValueChange={setCompFiltro}>
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Matemáticas">Matemáticas</SelectItem>
+                        <SelectItem value="Lenguaje">Lenguaje</SelectItem>
+                        <SelectItem value="Socio-emocional">Socio-emocional</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-[#4a5570]/70">Evaluación:</label>
+                    <Select value={evalFiltro} onValueChange={setEvalFiltro}>
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Diag">Diagnóstico</SelectItem>
+                        <SelectItem value="Eval1">Evaluación 1</SelectItem>
+                        <SelectItem value="Eval2">Evaluación 2</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Estudiante</TableHead>
                     <TableHead>IES</TableHead>
+                    <TableHead>Sede</TableHead>
                     <TableHead>Municipio</TableHead>
-                    <TableHead>Género</TableHead>
+                    <TableHead>Total Estudiantes</TableHead>
                     <TableHead>Preguntas</TableHead>
                     <TableHead>Correctas</TableHead>
                     <TableHead>Erróneas</TableHead>
@@ -599,12 +692,12 @@ export default function IESDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {detalleEvaluacion.map((r) => (
-                    <TableRow key={`${r.id}-${r.evaluacion}-${r.competencia}`}>
-                      <TableCell>{r.estudiante}</TableCell>
+                  {detalleEvaluacionPorIESede.map((r, index) => (
+                    <TableRow key={`${r.ies}-${r.municipio}-${r.evaluacion}-${r.competencia}-${index}`}>
                       <TableCell>{r.ies}</TableCell>
+                      <TableCell>{r.sede}</TableCell>
                       <TableCell>{r.municipio}</TableCell>
-                      <TableCell>{r.genero}</TableCell>
+                      <TableCell>{r.totalEstudiantes}</TableCell>
                       <TableCell>{r.preguntas}</TableCell>
                       <TableCell>{r.correctas}</TableCell>
                       <TableCell>{r.erroneas}</TableCell>
@@ -613,48 +706,6 @@ export default function IESDashboard() {
                       <TableCell>{r.sub2}</TableCell>
                       <TableCell>{r.descripcion}</TableCell>
                       <TableCell>{r.fecha}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-
-          {/* Nueva tabla: Asistencia por estudiante (actividades) */}
-          <Card className="rounded-2xl">
-            <CardHeader>
-              <div>
-                <CardTitle className="text-[#4a5570]">Asistencia por estudiante (actividades)</CardTitle>
-                <CardDescription>Clases y otras actividades · Competencia relacionada</CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Fecha</TableHead>
-                    <TableHead>Estudiante</TableHead>
-                    <TableHead>IES</TableHead>
-                    <TableHead>Municipio</TableHead>
-                    <TableHead>Género</TableHead>
-                    <TableHead>Actividad</TableHead>
-                    <TableHead>Competencia relacionada</TableHead>
-                    <TableHead>Asistió</TableHead>
-                    <TableHead>Observación</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {asisFiltrada.map((r, idx) => (
-                    <TableRow key={`${r.id}-${idx}`}>
-                      <TableCell>{r.fecha}</TableCell>
-                      <TableCell>{r.estudiante}</TableCell>
-                      <TableCell>{r.ies}</TableCell>
-                      <TableCell>{r.municipio}</TableCell>
-                      <TableCell>{r.genero}</TableCell>
-                      <TableCell>{r.actividad}</TableCell>
-                      <TableCell>{r.competencia}</TableCell>
-                      <TableCell>{r.asistio ? "Sí" : "No"}</TableCell>
-                      <TableCell>{r.observacion}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
