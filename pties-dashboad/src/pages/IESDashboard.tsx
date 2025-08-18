@@ -725,51 +725,38 @@ export default function IESDashboard() {
       {/* ---- GOBERNANZA / ENTREGABLES ---- */}
       {tab === "gobernanza" && (
         <div className="space-y-6">
-          {/* File Upload Links */}
+          {/* Document Management Overview */}
           <Card className="rounded-2xl">
             <CardHeader>
-              <CardTitle className="text-[#4a5570]">Gestión de Documentos</CardTitle>
-              <CardDescription>Subir y gestionar documentos del programa</CardDescription>
+              <CardTitle className="text-[#4a5570]">Estado de Documentos</CardTitle>
+              <CardDescription>Resumen del estado de documentos y entregables del programa</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Link 
-                  to="/upload/asistencia" 
-                  className="block p-4 border border-gray-200 rounded-lg hover:border-[#4a5570] hover:bg-[#4a5570]/5 transition-colors"
-                >
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-[#4a5570]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <Users className="w-6 h-6 text-[#4a5570]" />
-                    </div>
-                    <h3 className="font-medium text-[#4a5570] mb-1">Asistencia</h3>
-                    <p className="text-sm text-[#4a5570]/70">Subir reportes de asistencia</p>
-                  </div>
-                </Link>
-
-                <Link 
-                  to="/upload/plan-accion" 
-                  className="block p-4 border border-gray-200 rounded-lg hover:border-[#4a5570] hover:bg-[#4a5570]/5 transition-colors"
-                >
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-[#4a5570]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <ClipboardList className="w-6 h-6 text-[#4a5570]" />
-                    </div>
-                    <h3 className="font-medium text-[#4a5570] mb-1">Plan de Acción y Actividades</h3>
-                    <p className="text-sm text-[#4a5570]/70">Subir planes de acción</p>
-                  </div>
-                </Link>
-
-                <Link 
-                  to="/upload/educacion-evaluaciones" 
-                  className="block p-4 border border-gray-200 rounded-lg hover:border-[#4a5570] hover:bg-[#4a5570]/5 transition-colors"
-                >
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-[#4a5570]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <School className="w-6 h-6 text-[#4a5570]" />
-                    </div>
-                    <h3 className="font-medium text-[#4a5570] mb-1">Educación y Evaluaciones</h3>
-                    <p className="text-sm text-[#4a5570]/70">Subir planes educativos y evaluaciones</p>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-blue-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-blue-600">156</div>
+                  <div className="text-sm text-blue-600">Documentos Totales</div>
+                </div>
+                <div className="bg-green-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-green-600">142</div>
+                  <div className="text-sm text-green-600">Aprobados</div>
+                </div>
+                <div className="bg-amber-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-amber-600">9</div>
+                  <div className="text-sm text-amber-600">En Revisión</div>
+                </div>
+                <div className="bg-red-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-red-600">5</div>
+                  <div className="text-sm text-red-600">Pendientes</div>
+                </div>
+              </div>
+              
+              <div className="flex justify-center">
+                <Link to="/gestion-documentos">
+                  <Button className="bg-[#4a5570] hover:bg-[#3a4560] text-white rounded-2xl px-8 py-3">
+                    <FileText className="w-5 h-5 mr-2" />
+                    Ir a Gestión de Documentos
+                  </Button>
                 </Link>
               </div>
             </CardContent>
