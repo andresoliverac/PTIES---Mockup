@@ -5,7 +5,7 @@ import { Badge } from "../components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { Input } from "../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { Users, School, FileText, AlertTriangle, AlertCircle, ClipboardList } from "lucide-react";
+import { Users, School, FileText, AlertTriangle, AlertCircle, ClipboardList, Calendar } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 // ------------------ Utils ------------------
@@ -121,6 +121,11 @@ export default function IESDashboard() {
   const [tab, setTab] = useState<string>("resumen");
   const [selected, setSelected] = useState<any | null>(null);
 
+  // Global Filters (same as MEN Dashboard)
+  const [periodoFilter, setPeriodoFilter] = useState<string>('2025-01');
+  const [sexFilter, setSexFilter] = useState<string>('todos');
+  const [regionFilter, setRegionFilter] = useState<string>('todas');
+
   // Filtros globales (visibles en todas las secciones)
   const [periodo, setPeriodo] = useState<string>("2025-02");
   const [fechaInicio, setFechaInicio] = useState<string>("2025-01-01");
@@ -211,65 +216,59 @@ export default function IESDashboard() {
 
   return (
     <div className="min-h-screen w-full p-6 md:p-10 space-y-6 bg-[#f6f6f6] text-[#4a5570]">
-      {/* Header + Filtros globales (Periodo / Fechas / IES / Municipio / Género) */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-[#4a5570]">PTIES – Dashboard IES</h1>
-          <p className="text-sm text-[#4a5570]/70">Resumen + secciones de detalle (Estudiantes, Docentes, Gobernanza, Bienestar, Alertas)</p>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 w-full md:w-auto">
-          {/* Periodo */}
-          <div className="space-y-1">
-            <label className="text-xs text-[#4a5570]/70">Periodo actual</label>
-            <Select value={periodo} onValueChange={setPeriodo}>
-              <SelectTrigger className="w-full md:w-40"><SelectValue placeholder="Periodo" /></SelectTrigger>
-              <SelectContent>
+      {/* Header with Title */}
+      <div>
+        <h1 className="text-3xl font-semibold tracking-tight">PTIES – Dashboard IES</h1>
+        <p className="text-sm text-[#4a5570]/70">Resumen + secciones de detalle (Estudiantes, Docentes, Gobernanza, Bienestar, Alertas)</p>
+      </div>
+
+      {/* Global Filters */}
+      <div className="bg-white rounded-2xl p-4 border border-gray-200">
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Period Filter */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-[#4a5570]/70">Periodo:</label>
+            <Select value={periodoFilter} onValueChange={setPeriodoFilter}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="relative z-[9999] bg-white shadow-lg border">
                 <SelectItem value="2025-01">2025-01</SelectItem>
                 <SelectItem value="2025-02">2025-02</SelectItem>
                 <SelectItem value="2025-03">2025-03</SelectItem>
+                <SelectItem value="2025-04">2025-04</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          {/* Fecha inicio */}
-          <div className="space-y-1">
-            <label className="text-xs text-[#4a5570]/70">Fecha inicio</label>
-            <Input className="w-full md:w-40" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
-          </div>
-          {/* Fecha actual */}
-          <div className="space-y-1">
-            <label className="text-xs text-[#4a5570]/70">Fecha actual</label>
-            <Input className="w-full md:w-40" value={fechaActual} onChange={(e) => setFechaActual(e.target.value)} />
-          </div>
-          {/* IES */}
-          <div className="space-y-1">
-            <label className="text-xs text-[#4a5570]/70">IES</label>
-            <Select value={iesFiltro} onValueChange={setIesFiltro}>
-              <SelectTrigger className="w-full md:w-40"><SelectValue placeholder="IES" /></SelectTrigger>
-              <SelectContent>
-                {iesList.map((i) => (<SelectItem key={i} value={i}>{i}</SelectItem>))}
+
+          {/* Demographic Filters */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-[#4a5570]/70">Sexo:</label>
+            <Select value={sexFilter} onValueChange={setSexFilter}>
+              <SelectTrigger className="w-28">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="relative z-[9999] bg-white shadow-lg border">
+                <SelectItem value="todos">Todos</SelectItem>
+                <SelectItem value="masculino">Masculino</SelectItem>
+                <SelectItem value="femenino">Femenino</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          {/* Municipio */}
-          <div className="space-y-1">
-            <label className="text-xs text-[#4a5570]/70">Municipio</label>
-            <Select value={municipioFiltro} onValueChange={setMunicipioFiltro}>
-              <SelectTrigger className="w-full md:w-40"><SelectValue placeholder="Municipio" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Todos">Todos</SelectItem>
-                {municipios.map((m) => (<SelectItem key={m} value={m}>{m}</SelectItem>))}
-              </SelectContent>
-            </Select>
-          </div>
-          {/* Género */}
-          <div className="space-y-1 col-span-2 md:col-span-1">
-            <label className="text-xs text-[#4a5570]/70">Género</label>
-            <Select value={generoFiltro} onValueChange={setGeneroFiltro}>
-              <SelectTrigger className="w-full md:w-40"><SelectValue placeholder="Género" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Todos">Todos</SelectItem>
-                <SelectItem value="F">F</SelectItem>
-                <SelectItem value="M">M</SelectItem>
+          
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-[#4a5570]/70">Región:</label>
+            <Select value={regionFilter} onValueChange={setRegionFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="relative z-[9999] bg-white shadow-lg border">
+                <SelectItem value="todas">Todas las regiones</SelectItem>
+                <SelectItem value="andina">Región Andina</SelectItem>
+                <SelectItem value="caribe">Región Caribe</SelectItem>
+                <SelectItem value="pacifica">Región Pacífica</SelectItem>
+                <SelectItem value="orinoquia">Región Orinoquía</SelectItem>
+                <SelectItem value="amazonia">Región Amazonía</SelectItem>
               </SelectContent>
             </Select>
           </div>

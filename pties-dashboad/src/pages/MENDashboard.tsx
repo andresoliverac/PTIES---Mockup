@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Progress } from "../components/ui/progress";
 import { AlertCircle, Calendar, Map as MapIcon, FileText, Activity, School, Users, Building, AlertTriangle, TrendingUp, ClipboardList } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import ColombiaMap, { type BubbleMetric } from "../components/ColombiaMap";
 
 // --- Dummy data ---
 const kpis = [
@@ -60,6 +61,12 @@ export function pct(n: number, d: number) {
 }
 
 export default function MENDashboard() {
+  const [bubbleMetric, setBubbleMetric] = useState<BubbleMetric>('students');
+  const [sexFilter, setSexFilter] = useState<string>('todos');
+  const [regionFilter, setRegionFilter] = useState<string>('todas');
+  const [periodoFilter, setPeriodoFilter] = useState<string>('2025-02');
+  const [fechaInicio, setFechaInicio] = useState<string>('2025-01-01');
+  
   const totalAct = actividadesData[actividadesData.length - 1]?.total ?? 0;
   const cumplidasAct = actividadesData[actividadesData.length - 1]?.cumplidas ?? 0;
   const pctAct = pct(cumplidasAct, totalAct);
@@ -68,41 +75,83 @@ export default function MENDashboard() {
   const totEntregados = iesCompliance.reduce((s, r) => s + r.entregados, 0);
   const pctEntregables = pct(totEntregados, totEntregables);
 
+  // Apply filters to data (for demonstration purposes)
+  const getFilteredValue = (baseValue: number) => {
+    let multiplier = 1;
+    
+    // Apply sex filter adjustment
+    if (sexFilter === 'masculino') {
+      multiplier *= 0.52; // Assume 52% male
+    } else if (sexFilter === 'femenino') {
+      multiplier *= 0.48; // Assume 48% female
+    }
+    
+    // Apply region filter adjustment
+    if (regionFilter !== 'todas') {
+      multiplier *= 0.7; // Simulate filtered region data
+    }
+    
+    return Math.round(baseValue * multiplier);
+  };
+
   return (
     <div className="min-h-screen w-full p-6 md:p-10 space-y-6 bg-[#f6f6f6] text-[#4a5570]">
-      {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">PTIES – MEN Dashboard Global </h1>
-          <p className="text-sm text-[#4a5570]/70">Visión global del programa, riesgos y resultados. (Ejemplo UI)</p>
-        </div>
-        <div className="flex flex-wrap gap-3 items-end">
-          <div className="space-y-1">
-            <label className="text-xs text-[#4a5570]/70">Periodo actual</label>
-            <Select defaultValue="2025-02">
-              <SelectTrigger className="w-36"><SelectValue placeholder="Periodo" /></SelectTrigger>
-              <SelectContent>
+      {/* Header with Title */}
+      <div>
+        <h1 className="text-3xl font-semibold tracking-tight">PTIES – MEN Dashboard Global </h1>
+        <p className="text-sm text-[#4a5570]/70">Visión global del programa, riesgos y resultados. (Ejemplo UI)</p>
+      </div>
+
+      {/* Global Filters */}
+      <div className="bg-white rounded-2xl p-4 border border-gray-200">
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Period Filter */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-[#4a5570]/70">Periodo:</label>
+            <Select value={periodoFilter} onValueChange={setPeriodoFilter}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="relative z-[9999] bg-white shadow-lg border">
                 <SelectItem value="2025-01">2025-01</SelectItem>
                 <SelectItem value="2025-02">2025-02</SelectItem>
                 <SelectItem value="2025-03">2025-03</SelectItem>
+                <SelectItem value="2025-04">2025-04</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs text-[#4a5570]/70">Fecha inicio</label>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#4a5570]" />
-              <Input className="w-40" placeholder="2025-01-01" />
-            </div>
+
+          {/* Demographic Filters */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-[#4a5570]/70">Sexo:</label>
+            <Select value={sexFilter} onValueChange={setSexFilter}>
+              <SelectTrigger className="w-28">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="relative z-[9999] bg-white shadow-lg border">
+                <SelectItem value="todos">Todos</SelectItem>
+                <SelectItem value="masculino">Masculino</SelectItem>
+                <SelectItem value="femenino">Femenino</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs text-[#4a5570]/70">Fecha actual</label>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#4a5570]" />
-              <Input className="w-40" placeholder="2025-08-17" />
-            </div>
+          
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-[#4a5570]/70">Región:</label>
+            <Select value={regionFilter} onValueChange={setRegionFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="relative z-[9999] bg-white shadow-lg border">
+                <SelectItem value="todas">Todas las regiones</SelectItem>
+                <SelectItem value="andina">Región Andina</SelectItem>
+                <SelectItem value="caribe">Región Caribe</SelectItem>
+                <SelectItem value="pacifica">Región Pacífica</SelectItem>
+                <SelectItem value="orinoquia">Región Orinoquía</SelectItem>
+                <SelectItem value="amazonia">Región Amazonía</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Button className="rounded-2xl bg-[#4a5570] text-white hover:bg-[#3a455e]">Aplicar filtros</Button>
         </div>
       </div>
 
@@ -117,7 +166,14 @@ export default function MENDashboard() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-semibold text-[#4a5570]">{value.toLocaleString()}</div>
+              <div className="text-2xl font-semibold text-[#4a5570]">
+                {getFilteredValue(value).toLocaleString()}
+              </div>
+              {(sexFilter !== 'todos' || regionFilter !== 'todas') && (
+                <div className="text-xs text-[#4a5570]/50 mt-1">
+                  Original: {value.toLocaleString()}
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
@@ -285,16 +341,43 @@ export default function MENDashboard() {
       <div className="grid grid-cols-1 gap-6">
         <Card className="rounded-2xl">
           <CardHeader>
-            <CardTitle className="text-[#4a5570]">Mapa por municipio (estático)</CardTitle>
-            <CardDescription>Color por estado de avance (ejemplo)</CardDescription>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-50">
+              <div>
+                <CardTitle className="text-[#4a5570]">Mapa por municipio - Colombia</CardTitle>
+                <CardDescription>Progreso por región con indicadores visuales (interactivo)</CardDescription>
+              </div>
+              <div className="flex items-center gap-2 relative z-50">
+                <label className="text-sm font-medium text-[#4a5570]">Tamaño de burbuja:</label>
+                <div className="relative z-50">
+                  <Select value={bubbleMetric} onValueChange={(value: BubbleMetric) => setBubbleMetric(value)}>
+                    <SelectTrigger className="w-48 relative z-50">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="relative z-[9999] bg-white shadow-lg border">
+                      <SelectItem value="students">Número de Estudiantes</SelectItem>
+                      <SelectItem value="schools">Número de Colegios</SelectItem>
+                      <SelectItem value="avgScore">Puntaje Promedio</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="h-72 w-full rounded-xl overflow-hidden border">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Colombia_location_map.svg"
-                alt="Mapa estático de Colombia"
-                className="w-full h-full object-cover"
-              />
+            <div className="h-96 w-full rounded-xl overflow-hidden border bg-gray-50 relative z-10">
+              <ColombiaMap bubbleMetric={bubbleMetric} />
+            </div>
+            <div className="mt-4 flex justify-between items-center">
+              <div className="text-sm text-[#4a5570]/70">
+                Haz clic en los marcadores para ver información detallada de cada región
+              </div>
+              <div className="text-xs text-[#4a5570]/70 font-medium">
+                Tamaño de burbuja basado en: {
+                  bubbleMetric === 'students' ? 'Número de Estudiantes' :
+                  bubbleMetric === 'schools' ? 'Número de Colegios' :
+                  'Puntaje Promedio de Evaluaciones'
+                }
+              </div>
             </div>
           </CardContent>
         </Card>
