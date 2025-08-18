@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
 import { Link } from "react-router-dom";
-import { ArrowLeft, FolderOpen, Upload, FileText, Users, Calendar, ClipboardList, Filter, Search, Download } from "lucide-react";
+import { ArrowLeft, FolderOpen, Upload, FileText, Calendar, ClipboardList, Filter, Search, Download } from "lucide-react";
 import { parseCSV, csvData, type Deliverable } from "../utils/csvData";
 
 export default function GestionDocumentos() {
@@ -103,49 +103,7 @@ export default function GestionDocumentos() {
       <div className="max-w-6xl mx-auto">
         <h2 className="text-2xl font-semibold text-[#4a5570] text-center mb-8">Categorías de Documentos</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Asistencia */}
-          <Card className="rounded-2xl hover:shadow-lg transition-all duration-300 border-2 hover:border-[#4a5570]/20">
-            <CardHeader className="text-center pb-4">
-              <div className="w-16 h-16 bg-[#4a5570]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-[#4a5570]" />
-              </div>
-              <CardTitle className="text-xl text-[#4a5570]">Asistencia</CardTitle>
-              <CardDescription className="text-[#4a5570]/70">
-                Registro y control de participación en actividades del programa
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-[#4a5570] rounded-full"></div>
-                  <span className="text-[#4a5570]/80">Listas de asistencia</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-[#4a5570] rounded-full"></div>
-                  <span className="text-[#4a5570]/80">Reportes de participación</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-[#4a5570] rounded-full"></div>
-                  <span className="text-[#4a5570]/80">Certificados de asistencia</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-[#4a5570] rounded-full"></div>
-                  <span className="text-[#4a5570]/80">Control de actividades</span>
-                </div>
-              </div>
-              
-              <div className="pt-4">
-                <Link to="/upload/asistencia">
-                  <Button className="w-full bg-[#4a5570] hover:bg-[#3a4560] text-white rounded-2xl py-6 text-lg font-medium">
-                    <Upload className="w-5 h-5 mr-2" />
-                    Subir Documentos
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Plan de Acción */}
           <Card className="rounded-2xl hover:shadow-lg transition-all duration-300 border-2 hover:border-[#4a5570]/20">
             <CardHeader className="text-center pb-4">

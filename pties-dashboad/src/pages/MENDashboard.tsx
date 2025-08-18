@@ -292,7 +292,7 @@ export default function MENDashboard() {
           <Card className="rounded-2xl h-80">
             <CardHeader>
               <CardTitle className="text-[#4a5570]">Impacto en Aprendizajes</CardTitle>
-              <CardDescription className="text-[#4a5570]/70">Diagnóstico vs. Formativas vs. Sumativa</CardDescription>
+              <CardDescription className="text-[#4a5570]/70">Diagnóstico vs. Formativas vs. Acumulada</CardDescription>
             </CardHeader>
             <CardContent className="h-56">
               <ResponsiveContainer width="100%" height="100%">

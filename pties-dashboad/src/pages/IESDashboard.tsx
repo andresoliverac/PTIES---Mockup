@@ -27,6 +27,13 @@ function pct(n: number, d: number): number { return d === 0 ? 0 : Math.round((n 
 // ------------------ Dummy data (replace with API) ------------------
 const PRIMARY = "#4a5570";
 
+// Color palette for competencias
+const COMPETENCIA_COLORS = {
+  "Matemáticas": "#4a5570", // Blue
+  "Lenguaje": "#2c3e50", // Dark blue/black
+  "Socio-emocional": "#27ae60", // Green
+};
+
 const kpisIES = [
   { label: "Estudiantes", value: 1200, icon: Users },
   { label: "Colegios Apadrinados", value: 20, icon: School },
@@ -42,33 +49,35 @@ const colegios = [
 // Estudiantes – resultados por corte (scores 0–100)
 const pruebasPorCorte: Record<string, number[]> = {
   Diag: [48, 52, 55, 41, 60, 66, 58, 49, 53, 45, 62, 57],
-  Form1: [55, 59, 61, 50, 67, 70, 64, 58, 60, 56, 69, 63],
-  Form2: [59, 63, 66, 53, 70, 73, 68, 62, 65, 61, 72, 67],
-  Sumativa: [65, 68, 71, 58, 74, 77, 72, 66, 70, 67, 76, 71],
+  Eval1: [55, 59, 61, 50, 67, 70, 64, 58, 60, 56, 69, 63],
+  Eval2: [59, 63, 66, 53, 70, 73, 68, 62, 65, 61, 72, 67],
 };
 
 // Drill-down por competencia (simulado)
 const pruebasPorComp: Record<string, Record<string, number[]>> = {
   "Matemáticas": {
     Diag: pruebasPorCorte.Diag.map((v) => Math.max(0, v - 2)),
-    Form1: pruebasPorCorte.Form1.map((v) => Math.max(0, v - 1)),
-    Form2: pruebasPorCorte.Form2,
-    Sumativa: pruebasPorCorte.Sumativa.map((v) => Math.min(100, v + 1)),
+    Eval1: pruebasPorCorte.Eval1.map((v) => Math.max(0, v - 1)),
+    Eval2: pruebasPorCorte.Eval2,
   },
   "Lenguaje": {
     Diag: pruebasPorCorte.Diag.map((v) => Math.min(100, v + 1)),
-    Form1: pruebasPorCorte.Form1,
-    Form2: pruebasPorCorte.Form2.map((v) => Math.min(100, v + 2)),
-    Sumativa: pruebasPorCorte.Sumativa.map((v) => Math.min(100, v + 3)),
+    Eval1: pruebasPorCorte.Eval1,
+    Eval2: pruebasPorCorte.Eval2.map((v) => Math.min(100, v + 2)),
+  },
+  "Socio-emocional": {
+    Diag: pruebasPorCorte.Diag.map((v) => Math.max(0, v - 3)),
+    Eval1: pruebasPorCorte.Eval1.map((v) => Math.max(0, v - 2)),
+    Eval2: pruebasPorCorte.Eval2.map((v) => Math.min(100, v - 1)),
   },
 };
 
-// Asistencia mensual (solo estudiantes, sin docentes)
+// Asistencia mensual por competencia
 const asistencia = [
-  { mes: "Ene", estudiantes: 92 },
-  { mes: "Feb", estudiantes: 91 },
-  { mes: "Mar", estudiantes: 90 },
-  { mes: "Abr", estudiantes: 91 },
+  { mes: "Ene", matematicas: 94, lenguaje: 90, socioemocional: 88 },
+  { mes: "Feb", matematicas: 93, lenguaje: 89, socioemocional: 87 },
+  { mes: "Mar", matematicas: 91, lenguaje: 89, socioemocional: 85 },
+  { mes: "Abr", matematicas: 92, lenguaje: 90, socioemocional: 86 },
 ];
 
 // Docentes (pestaña Docentes permanece)
@@ -99,12 +108,12 @@ const alertas = [
 
 // Datos de estudiantes para tablas
 const estudiantesBase = [
-  { id: "ST001", nombre: "Juan Pérez", genero: "M", municipio: "Medellín", ies: "IES Andes", asistenciaProm: 93, matematicas: 62, lenguaje: 70 },
-  { id: "ST002", nombre: "María López", genero: "F", municipio: "Medellín", ies: "IES Andes", asistenciaProm: 95, matematicas: 74, lenguaje: 78 },
-  { id: "ST003", nombre: "Carlos Ruiz", genero: "M", municipio: "Envigado", ies: "IES Pacífico", asistenciaProm: 90, matematicas: 58, lenguaje: 65 },
-  { id: "ST004", nombre: "Laura Gómez", genero: "F", municipio: "Bello", ies: "IES Sabana", asistenciaProm: 92, matematicas: 71, lenguaje: 80 },
-  { id: "ST005", nombre: "Andrés Mejía", genero: "M", municipio: "Envigado", ies: "IES Pacífico", asistenciaProm: 88, matematicas: 55, lenguaje: 60 },
-  { id: "ST006", nombre: "Sofía Restrepo", genero: "F", municipio: "Bello", ies: "IES Sabana", asistenciaProm: 96, matematicas: 76, lenguaje: 82 },
+  { id: "ST001", nombre: "Juan Pérez", genero: "M", municipio: "Medellín", ies: "IES Andes", asistenciaProm: 93, matematicas: 62, lenguaje: 70, socioemocional: 58 },
+  { id: "ST002", nombre: "María López", genero: "F", municipio: "Medellín", ies: "IES Andes", asistenciaProm: 95, matematicas: 74, lenguaje: 78, socioemocional: 72 },
+  { id: "ST003", nombre: "Carlos Ruiz", genero: "M", municipio: "Envigado", ies: "IES Pacífico", asistenciaProm: 90, matematicas: 58, lenguaje: 65, socioemocional: 55 },
+  { id: "ST004", nombre: "Laura Gómez", genero: "F", municipio: "Bello", ies: "IES Sabana", asistenciaProm: 92, matematicas: 71, lenguaje: 80, socioemocional: 68 },
+  { id: "ST005", nombre: "Andrés Mejía", genero: "M", municipio: "Envigado", ies: "IES Pacífico", asistenciaProm: 88, matematicas: 55, lenguaje: 60, socioemocional: 52 },
+  { id: "ST006", nombre: "Sofía Restrepo", genero: "F", municipio: "Bello", ies: "IES Sabana", asistenciaProm: 96, matematicas: 76, lenguaje: 82, socioemocional: 75 },
 ];
 
 // Asistencia por estudiante en actividades (clases u otras)
@@ -128,7 +137,6 @@ export default function IESDashboard() {
   const [regionFilter, setRegionFilter] = useState<string>('todas');
   const [iesFilter, setIesFilter] = useState<string>('todas');
   const [municipioFilter, setMunicipioFilter] = useState<string>('todos');
-  const [competenciaFilter, setCompetenciaFilter] = useState<string>('todas');
 
   // Filtros globales (visibles en todas las secciones)
   const [periodo, setPeriodo] = useState<string>("2025-02");
@@ -138,13 +146,12 @@ export default function IESDashboard() {
   const [municipioFiltro, setMunicipioFiltro] = useState<string>("Todos");
   const [generoFiltro, setGeneroFiltro] = useState<string>("Todos");
 
-  // Filtros específicos de Estudiantes
-  const [evalFiltro, setEvalFiltro] = useState<string>("Sumativa");
-  const [compFiltro, setCompFiltro] = useState<string>("Matemáticas");
+  // Filtros específicos de Estudiantes (fixed values since filters were removed)
+  const evalFiltro = "Eval2"; // Default to Eval2
+  const compFiltro = "Matemáticas"; // Default to Matemáticas
 
-  // Estado gráfico evaluaciones (drill-down)
-  const [modoEvalChart, setModoEvalChart] = useState<"global" | "competencia">("global");
-  const [compChart, setCompChart] = useState<string>("Matemáticas");
+  // Estado gráfico evaluaciones - metric selector (Promedio or Mediana)
+  const [metricaEval, setMetricaEval] = useState<"promedio" | "mediana">("promedio");
 
   // Filtros locales para asistencia por estudiante
   const [tipoActividad, setTipoActividad] = useState<string>("Todas");
@@ -153,19 +160,8 @@ export default function IESDashboard() {
   const cortes = Object.keys(pruebasPorCorte);
   const seriePromedio = cortes.map((c) => ({ corte: c, promedio: mean(pruebasPorCorte[c]) }));
   const serieMediana = cortes.map((c) => ({ corte: c, mediana: median(pruebasPorCorte[c]) }));
-  const ultima = evalFiltro; // usar filtro elegido
 
-  // Histograma simple de la evaluación seleccionada
-  const histAgg = useMemo(() => {
-    const arr = pruebasPorCorte[ultima] || [];
-    const bins: Record<string, number> = {};
-    arr.forEach((v) => {
-      const low = Math.floor(v / 10) * 10;
-      const label = `${low}-${low + 9}`;
-      bins[label] = (bins[label] || 0) + 1;
-    });
-    return Object.entries(bins).map(([rango, conteo]) => ({ rango, conteo }));
-  }, [ultima]);
+  // Removed histAgg and ultima variables since Distribution chart was removed
 
   const municipios = useMemo(() => Array.from(new Set(colegios.map((c) => c.municipio))), []);
   const iesList = ["Todas", "IES Andes", "IES Pacífico", "IES Sabana"];
@@ -181,7 +177,9 @@ export default function IESDashboard() {
   // Construir tabla de detalle por evaluación/competencia
   const detalleEvaluacion = useMemo(() => {
     return estudiantesFiltrados.map((e) => {
-      const puntajeBase = compFiltro === "Matemáticas" ? e.matematicas : e.lenguaje;
+      const puntajeBase = compFiltro === "Matemáticas" ? e.matematicas : 
+                         compFiltro === "Lenguaje" ? e.lenguaje :
+                         e.socioemocional; // Use actual socio-emocional data
       const ajuste = cortes.indexOf(evalFiltro) * 2; // pequeño ajuste por corte
       const puntaje = Math.min(100, Math.max(0, Math.round(puntajeBase + ajuste)));
       const preguntas = 40;
@@ -199,10 +197,12 @@ export default function IESDashboard() {
         correctas,
         erroneas,
         puntaje,
-        sub1: compFiltro === "Matemáticas" ? "Álgebra" : "Comprensión",
-        sub2: compFiltro === "Matemáticas" ? "Datos" : "Producción",
+        sub1: compFiltro === "Matemáticas" ? "Álgebra" : 
+             compFiltro === "Lenguaje" ? "Comprensión" : "Autoestima",
+        sub2: compFiltro === "Matemáticas" ? "Datos" : 
+             compFiltro === "Lenguaje" ? "Producción" : "Colaboración",
         descripcion: `Evaluación ${evalFiltro} – ${compFiltro}`,
-        fecha: evalFiltro === "Diag" ? "2025-02-10" : evalFiltro === "Form1" ? "2025-04-15" : evalFiltro === "Form2" ? "2025-06-15" : "2025-11-20",
+        fecha: "2025-06-15", // Fixed date for Eval2 evaluation
       };
     });
   }, [estudiantesFiltrados, compFiltro, evalFiltro, cortes]);
@@ -332,25 +332,6 @@ export default function IESDashboard() {
               </SelectContent>
             </Select>
           </div>
-
-          {/* Competencia Filter */}
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-[#4a5570]/70">Competencia:</label>
-            <Select value={competenciaFilter} onValueChange={setCompetenciaFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="relative z-[9999] bg-white shadow-lg border">
-                <SelectItem value="todas">Todas las competencias</SelectItem>
-                <SelectItem value="matematicas">Matemáticas</SelectItem>
-                <SelectItem value="lenguaje">Lenguaje</SelectItem>
-                <SelectItem value="ciencias-naturales">Ciencias Naturales</SelectItem>
-                <SelectItem value="ciencias-sociales">Ciencias Sociales</SelectItem>
-                <SelectItem value="socioemocional">Socioemocional</SelectItem>
-                <SelectItem value="ingles">Inglés</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
         </div>
       </div>
 
@@ -444,96 +425,108 @@ export default function IESDashboard() {
       {/* ---- ESTUDIANTES ---- */}
       {tab === "estudiantes" && (
         <div className="space-y-6">
-          {/* Filtros específicos: Evaluación / Competencia (visibles cerca de la sección) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div className="space-y-1">
-              <label className="text-xs text-[#4a5570]/70">Evaluación (sección Estudiantes)</label>
-              <Select value={evalFiltro} onValueChange={setEvalFiltro}>
-                <SelectTrigger className="w-full"><SelectValue placeholder="Evaluación" /></SelectTrigger>
-                <SelectContent>
-                  {cortes.map((c) => (<SelectItem key={c} value={c}>{c}</SelectItem>))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs text-[#4a5570]/70">Competencia (para tablas)</label>
-              <Select value={compFiltro} onValueChange={setCompFiltro}>
-                <SelectTrigger className="w-full"><SelectValue placeholder="Competencia" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Matemáticas">Matemáticas</SelectItem>
-                  <SelectItem value="Lenguaje">Lenguaje</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
           {/* Sección: Evaluaciones */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Card className="rounded-2xl lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="rounded-2xl">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-[#4a5570]">Evaluaciones – Promedio y Mediana</CardTitle>
-                    <CardDescription>Por corte {modoEvalChart === "competencia" ? `· ${compChart}` : "· Global"}</CardDescription>
+                    <CardTitle className="text-[#4a5570]">Evaluaciones por Competencia</CardTitle>
+                    <CardDescription>Todas las competencias</CardDescription>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Select value={modoEvalChart} onValueChange={(v:any)=>setModoEvalChart(v)}>
-                      <SelectTrigger className="w-40"><SelectValue placeholder="Modo" /></SelectTrigger>
+                    <Select value={metricaEval} onValueChange={(v: any) => setMetricaEval(v)}>
+                      <SelectTrigger className="w-32">
+                        <SelectValue placeholder="Métrica" />
+                      </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="global">Global</SelectItem>
-                        <SelectItem value="competencia">Por competencia</SelectItem>
+                        <SelectItem value="promedio">Promedio</SelectItem>
+                        <SelectItem value="mediana">Mediana</SelectItem>
                       </SelectContent>
                     </Select>
-                    {modoEvalChart === "competencia" && (
-                      <Select value={compChart} onValueChange={setCompChart}>
-                        <SelectTrigger className="w-40"><SelectValue placeholder="Competencia" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Matemáticas">Matemáticas</SelectItem>
-                          <SelectItem value="Lenguaje">Lenguaje</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  {modoEvalChart === "global" ? (
-                    <LineChart data={cortes.map((c, i) => ({ corte: c, promedio: seriePromedio[i].promedio, mediana: serieMediana[i].mediana }))}>
-                      <XAxis dataKey="corte" stroke={PRIMARY} />
-                      <YAxis stroke={PRIMARY} />
-                      <Tooltip />
-                      <Legend />
-                      <Line type="monotone" dataKey="promedio" stroke={PRIMARY} name="Promedio" />
-                      <Line type="monotone" dataKey="mediana" stroke="#6c738a" name="Mediana" />
-                    </LineChart>
-                  ) : (
-                    <LineChart data={cortes.map((c) => ({ corte: c, promedio: mean(pruebasPorComp[compChart][c]), mediana: median(pruebasPorComp[compChart][c]) }))}>
-                      <XAxis dataKey="corte" stroke={PRIMARY} />
-                      <YAxis stroke={PRIMARY} />
-                      <Tooltip />
-                      <Legend />
-                      <Line type="monotone" dataKey="promedio" stroke={PRIMARY} name={`Promedio ${compChart}`} />
-                      <Line type="monotone" dataKey="mediana" stroke="#6c738a" name={`Mediana ${compChart}`} />
-                    </LineChart>
-                  )}
+                  <LineChart 
+                    data={cortes.map((c) => ({
+                      corte: c,
+                      matematicas: metricaEval === "promedio" 
+                        ? mean(pruebasPorComp["Matemáticas"][c]) 
+                        : median(pruebasPorComp["Matemáticas"][c]),
+                      lenguaje: metricaEval === "promedio"
+                        ? mean(pruebasPorComp["Lenguaje"][c])
+                        : median(pruebasPorComp["Lenguaje"][c]),
+                      socioemocional: metricaEval === "promedio"
+                        ? mean(pruebasPorComp["Socio-emocional"][c])
+                        : median(pruebasPorComp["Socio-emocional"][c])
+                    }))}
+                  >
+                    <XAxis dataKey="corte" stroke={PRIMARY} />
+                    <YAxis stroke={PRIMARY} />
+                    <Tooltip />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="matematicas" 
+                      name="Matemáticas" 
+                      stroke={COMPETENCIA_COLORS["Matemáticas"]} 
+                      strokeWidth={2} 
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="lenguaje" 
+                      name="Lenguaje" 
+                      stroke={COMPETENCIA_COLORS["Lenguaje"]} 
+                      strokeWidth={2} 
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="socioemocional" 
+                      name="Socio-emocional" 
+                      stroke={COMPETENCIA_COLORS["Socio-emocional"]} 
+                      strokeWidth={2} 
+                    />
+                  </LineChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
             <Card className="rounded-2xl">
               <CardHeader>
-                <CardTitle className="text-[#4a5570]">Distribución – {ultima}</CardTitle>
-                <CardDescription>Bins de 10 puntos</CardDescription>
+                <CardTitle className="text-[#4a5570]">Asistencia mensual</CardTitle>
+                <CardDescription>Por competencia</CardDescription>
               </CardHeader>
               <CardContent className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={histAgg}>
-                    <XAxis dataKey="rango" stroke={PRIMARY} />
+                  <LineChart data={asistencia}>
+                    <XAxis dataKey="mes" stroke={PRIMARY} />
                     <YAxis stroke={PRIMARY} />
                     <Tooltip />
-                    <Bar dataKey="conteo" fill={PRIMARY} radius={[6,6,0,0]} />
-                  </BarChart>
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="matematicas" 
+                      name="Matemáticas" 
+                      stroke={COMPETENCIA_COLORS["Matemáticas"]} 
+                      strokeWidth={2} 
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="lenguaje" 
+                      name="Lenguaje" 
+                      stroke={COMPETENCIA_COLORS["Lenguaje"]} 
+                      strokeWidth={2} 
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="socioemocional" 
+                      name="Socio-emocional" 
+                      stroke={COMPETENCIA_COLORS["Socio-emocional"]} 
+                      strokeWidth={2} 
+                    />
+                  </LineChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
@@ -558,6 +551,7 @@ export default function IESDashboard() {
                     <TableHead>Asistencia %</TableHead>
                     <TableHead>Matemáticas</TableHead>
                     <TableHead>Lenguaje</TableHead>
+                    <TableHead>Socio-emocional</TableHead>
                     <TableHead>Puntaje Global</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -571,7 +565,8 @@ export default function IESDashboard() {
                       <TableCell>{e.asistenciaProm}</TableCell>
                       <TableCell>{e.matematicas}</TableCell>
                       <TableCell>{e.lenguaje}</TableCell>
-                      <TableCell>{Math.round((e.matematicas + e.lenguaje)/2)}</TableCell>
+                      <TableCell>{e.socioemocional}</TableCell>
+                      <TableCell>{Math.round((e.matematicas + e.lenguaje + e.socioemocional)/3)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -622,25 +617,6 @@ export default function IESDashboard() {
                   ))}
                 </TableBody>
               </Table>
-            </CardContent>
-          </Card>
-
-          {/* Sección: Asistencia mensual (solo estudiantes) */}
-          <Card className="rounded-2xl">
-            <CardHeader>
-              <CardTitle className="text-[#4a5570]">Asistencia mensual</CardTitle>
-              <CardDescription>Estudiantes</CardDescription>
-            </CardHeader>
-            <CardContent className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={asistencia}>
-                  <XAxis dataKey="mes" stroke={PRIMARY} />
-                  <YAxis stroke={PRIMARY} />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="estudiantes" name="Estudiantes" stroke={PRIMARY} />
-                </LineChart>
-              </ResponsiveContainer>
             </CardContent>
           </Card>
 

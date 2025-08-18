@@ -180,7 +180,7 @@ export default function EducacionEvaluacionesUpload() {
                   <option>Evaluación Diagnóstica</option>
                   <option>Evaluación Formativa 1</option>
                   <option>Evaluación Formativa 2</option>
-                  <option>Evaluación Sumativa</option>
+                  <option>Evaluación Acumulada</option>
                   <option>Prueba de Competencias</option>
                 </select>
               </div>
@@ -237,7 +237,7 @@ export default function EducacionEvaluacionesUpload() {
                 <div className="p-3 border border-gray-200 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-[#4a5570]">Eval_Sumativa_Matematicas_2025-02.xlsx</p>
+                      <p className="font-medium text-[#4a5570]">Eval_Acumulada_Matematicas_2025-02.xlsx</p>
                       <p className="text-sm text-[#4a5570]/70">Subido el 22 Feb 2025</p>
                     </div>
                     <Button variant="ghost" size="sm" className="text-[#4a5570]">
