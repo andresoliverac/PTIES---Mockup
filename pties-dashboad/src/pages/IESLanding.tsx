@@ -20,11 +20,12 @@ export default function IESLanding() {
         </div>
         
         <div className="max-w-4xl mx-auto bg-white rounded-2xl p-8 shadow-sm">
-          <h2 className="text-2xl font-semibold text-[#4a5570] mb-4">Programa PTIES - Transformación Digital Educativa</h2>
+          <h2 className="text-2xl font-semibold text-[#4a5570] mb-4">Programa de Tránsito Inmediato a Educación Superior (PTIES)</h2>
           <p className="text-[#4a5570]/80 text-lg leading-relaxed mb-6">
-            El Programa de Transformación de la Calidad Educativa (PTIES) es una iniciativa integral que busca 
-            fortalecer las capacidades institucionales y pedagógicas de las Instituciones de Educación Superior 
-            a través de estrategias innovadoras de enseñanza, aprendizaje y gestión académica.
+            Como parte de las acciones del Gobierno Nacional para materializar lo establecido en el Plan Nacional 
+            de Desarrollo (2022-2026), el PTIES permite que jóvenes bachilleres superen las barreras académicas 
+            y de información que normalmente enfrentan para acceder a educación superior, beneficiando de manera 
+            directa a jóvenes de contextos vulnerables, municipios PDET y zonas rurales.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -32,24 +33,42 @@ export default function IESLanding() {
               <div className="w-12 h-12 bg-[#4a5570]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Target className="w-6 h-6 text-[#4a5570]" />
               </div>
-              <h3 className="font-semibold text-[#4a5570] mb-2">Objetivos Claros</h3>
-              <p className="text-sm text-[#4a5570]/70">Mejorar la calidad educativa mediante metodologías innovadoras</p>
+              <h3 className="font-semibold text-[#4a5570] mb-2">Objetivo General</h3>
+              <p className="text-sm text-[#4a5570]/70">Incrementar el tránsito inmediato a la educación superior mediante el fortalecimiento de competencias socioemocionales y capacidades académicas</p>
             </div>
             
             <div className="text-center">
               <div className="w-12 h-12 bg-[#4a5570]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Users className="w-6 h-6 text-[#4a5570]" />
               </div>
-              <h3 className="font-semibold text-[#4a5570] mb-2">Colaboración</h3>
-              <p className="text-sm text-[#4a5570]/70">Trabajo conjunto entre instituciones, docentes y estudiantes</p>
+              <h3 className="font-semibold text-[#4a5570] mb-2">Población Objetivo</h3>
+              <p className="text-sm text-[#4a5570]/70">Estudiantes de grados 10° y 11° y bachilleres entre 17 y 28 años de municipios focalizados</p>
             </div>
             
             <div className="text-center">
               <div className="w-12 h-12 bg-[#4a5570]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Award className="w-6 h-6 text-[#4a5570]" />
               </div>
-              <h3 className="font-semibold text-[#4a5570] mb-2">Resultados</h3>
-              <p className="text-sm text-[#4a5570]/70">Impacto medible en el aprendizaje y desarrollo competencial</p>
+              <h3 className="font-semibold text-[#4a5570] mb-2">Articulación IES-IEM</h3>
+              <p className="text-sm text-[#4a5570]/70">Fortalecimiento de aprendizajes, orientación socio-ocupacional y relación familia-escuela-comunidad</p>
+            </div>
+          </div>
+          
+          <div className="bg-[#4a5570]/5 rounded-xl p-6 mb-6">
+            <h4 className="font-semibold text-[#4a5570] mb-3">Objetivos Específicos del PTIES:</h4>
+            <div className="space-y-2 text-[#4a5570]/80">
+              <div className="flex items-start gap-2">
+                <div className="w-2 h-2 bg-[#4a5570] rounded-full mt-2 flex-shrink-0"></div>
+                <span className="text-sm">Articulación armoniosa entre IES e instituciones de educación media para fortalecer aprendizajes y competencias</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-2 h-2 bg-[#4a5570] rounded-full mt-2 flex-shrink-0"></div>
+                <span className="text-sm">Fomentar experiencias de tránsito anticipado con estrategias pertinentes según formación universitaria, tecnológica o técnica</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-2 h-2 bg-[#4a5570] rounded-full mt-2 flex-shrink-0"></div>
+                <span className="text-sm">Implementar estrategias de monitoreo de aprendizajes y bienestar estudiantil para acompañamiento integral</span>
+              </div>
             </div>
           </div>
           
