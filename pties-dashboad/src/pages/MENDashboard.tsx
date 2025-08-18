@@ -161,13 +161,13 @@ export default function MENDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Col 1 */}
         <div className="space-y-6">
-          <Card className="rounded-2xl">
+          <Card className="rounded-2xl h-80">
             <CardHeader>
               <CardTitle className="text-[#4a5570]">Asistencia</CardTitle>
               <CardDescription className="text-[#4a5570]/70">% por grupo</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="h-56">
+            <CardContent className="h-56">
+              <div className="h-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={asistenciaData}>
                     <XAxis dataKey="grupo" stroke="#4a5570" />
@@ -180,19 +180,21 @@ export default function MENDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-2xl">
+          <Card className="rounded-2xl h-80">
             <CardHeader>
               <CardTitle className="text-[#4a5570]">Actividades hasta fecha</CardTitle>
               <CardDescription className="text-[#4a5570]/70">Total vs. cumplidas</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between text-sm">
-                <span>Total: <strong>{totalAct}</strong></span>
-                <span>Cumplidas: <strong>{cumplidasAct}</strong></span>
-                <span>Avance: <strong>{pctAct}%</strong></span>
+            <CardContent className="h-56">
+              <div className="space-y-3 mb-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span>Total: <strong>{totalAct}</strong></span>
+                  <span>Cumplidas: <strong>{cumplidasAct}</strong></span>
+                  <span>Avance: <strong>{pctAct}%</strong></span>
+                </div>
+                <Progress value={pctAct} className="h-3 rounded-full bg-[#4a5570]/20" />
               </div>
-              <Progress value={pctAct} className="h-3 rounded-full bg-[#4a5570]/20" />
-              <div className="h-48">
+              <div className="h-36">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={actividadesData}>
                     <XAxis dataKey="mes" stroke="#4a5570" />
@@ -210,7 +212,7 @@ export default function MENDashboard() {
 
         {/* Col 2 */}
         <div className="space-y-6">
-          <Card className="rounded-2xl">
+          <Card className="rounded-2xl h-80">
             <CardHeader>
               <CardTitle className="text-[#4a5570]">Impacto en Aprendizajes</CardTitle>
               <CardDescription className="text-[#4a5570]/70">Diagnóstico vs. Formativas vs. Sumativa</CardDescription>
@@ -230,7 +232,7 @@ export default function MENDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-2xl">
+          <Card className="rounded-2xl h-80">
             <CardHeader>
               <CardTitle className="text-[#4a5570]">Bienestar estudiantil</CardTitle>
               <CardDescription className="text-[#4a5570]/70">Acceso a servicios (%)</CardDescription>
@@ -250,19 +252,19 @@ export default function MENDashboard() {
 
         {/* Col 3 */}
         <div className="space-y-6">
-          <Card className="rounded-2xl">
+          <Card className="rounded-2xl h-[41rem]">
             <CardHeader>
               <CardTitle className="text-[#4a5570]">Cumplimiento IES</CardTitle>
               <CardDescription className="text-[#4a5570]/70">Entregables y asistencia</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 h-[36rem] flex flex-col">
               <div className="flex items-center justify-between text-sm">
                 <span>Total entregables: <strong>{totEntregables}</strong></span>
                 <span>Entregados: <strong>{totEntregados}</strong></span>
                 <span>Avance: <strong>{pctEntregables}%</strong></span>
               </div>
               <Progress value={pctEntregables} className="h-3 rounded-full bg-[#4a5570]/20" />
-              <div className="max-h-56 overflow-auto border rounded-xl">
+              <div className="flex-1 overflow-auto border rounded-xl">
                 <table className="w-full text-sm">
                   <thead className="sticky top-0 bg-white">
                     <tr className="text-left text-[#4a5570]">
@@ -297,9 +299,9 @@ export default function MENDashboard() {
         </div>
       </div>
 
-      {/* Second row: mapa detalle + transición */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="rounded-2xl lg:col-span-2">
+      {/* Second row: mapa detalle */}
+      <div className="grid grid-cols-1 gap-6">
+        <Card className="rounded-2xl">
           <CardHeader>
             <CardTitle className="text-[#4a5570]">Mapa por municipio (estático)</CardTitle>
             <CardDescription>Color por estado de avance (ejemplo)</CardDescription>
@@ -311,85 +313,6 @@ export default function MENDashboard() {
                 alt="Mapa estático de Colombia"
                 className="w-full h-full object-cover"
               />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="text-[#4a5570]">Transición a ES</CardTitle>
-            <CardDescription>% estudiantes que transitan</CardDescription>
-          </CardHeader>
-          <CardContent className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={transicionData} dataKey="value" nameKey="name" outerRadius={90}>
-                  {transicionData.map((_, i) => (
-                    <Cell key={i} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Third row: permanencia / timeline / gobernanza */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="text-[#4a5570]">Permanencia</CardTitle>
-            <CardDescription>Evolución mensual</CardDescription>
-          </CardHeader>
-          <CardContent className="h-60">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={permanenciaData}>
-                <XAxis dataKey="mes" stroke="#4a5570" />
-                <YAxis stroke="#4a5570" />
-                <Tooltip />
-                <Line type="monotone" dataKey="pct" stroke="#4a5570" />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="text-[#4a5570]">Línea de tiempo</CardTitle>
-            <CardDescription>Hitos del plan</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-3 text-sm">
-              <li className="flex items-start gap-2"><Badge variant="outline">Ene</Badge> Entrega plan de trabajo (OK)</li>
-              <li className="flex items-start gap-2"><Badge variant="outline">Feb</Badge> Diagnósticos aplicados (OK)</li>
-              <li className="flex items-start gap-2"><Badge variant="outline">Mar</Badge> Formativa #1 (En curso)</li>
-              <li className="flex items-start gap-2"><Badge variant="outline">Jun</Badge> Informe parcial docentes (Pendiente)</li>
-              <li className="flex items-start gap-2"><Badge variant="outline">Nov</Badge> Sumativa + Cierre (Planificado)</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="text-[#4a5570]">Gobernanza & Reportes</CardTitle>
-            <CardDescription>Ejecución y trazabilidad</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between text-sm mb-2">
-                <span>Ejecución presupuestal</span>
-                <span className="font-medium text-[#4a5570]">72%</span>
-              </div>
-              <Progress value={72} className="h-3 rounded-full bg-[#4a5570]/20" />
-            </div>
-            <div className="space-y-2">
-              {reports.map((r) => (
-                <div key={r.name} className="flex items-center justify-between text-sm p-2 rounded-xl border">
-                  <div className="flex items-center gap-2"><FileText className="w-4 h-4 text-[#4a5570]" /> {r.name}</div>
-                  <span className="text-[#4a5570]/70">{r.date}</span>
-                </div>
-              ))}
             </div>
           </CardContent>
         </Card>
