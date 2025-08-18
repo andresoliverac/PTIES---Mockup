@@ -51,11 +51,11 @@ export default function SNIESHeader() {
             </Link>
             <Link to="/">
               <Button 
-                variant={location.pathname === "/" ? "default" : "ghost"}
-                className={location.pathname === "/" ? "bg-white text-[#4a5570] hover:bg-gray-100" : "text-white hover:bg-[#3a4560] border-white"}
+                variant={(location.pathname === "/" || location.pathname === "/ies-dashboard") ? "default" : "ghost"}
+                className={(location.pathname === "/" || location.pathname === "/ies-dashboard") ? "bg-white text-[#4a5570] hover:bg-gray-100" : "text-white hover:bg-[#3a4560] border-white"}
               >
                 <Building className="w-4 h-4 mr-2" />
-                Dashboard IES
+                Portal IES
               </Button>
             </Link>
           </div>

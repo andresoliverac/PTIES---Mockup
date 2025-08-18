@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
-import { Input } from "../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Users, School, FileText, AlertTriangle, AlertCircle, ClipboardList, Calendar } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
@@ -125,6 +126,9 @@ export default function IESDashboard() {
   const [periodoFilter, setPeriodoFilter] = useState<string>('2025-01');
   const [sexFilter, setSexFilter] = useState<string>('todos');
   const [regionFilter, setRegionFilter] = useState<string>('todas');
+  const [iesFilter, setIesFilter] = useState<string>('todas');
+  const [municipioFilter, setMunicipioFilter] = useState<string>('todos');
+  const [competenciaFilter, setCompetenciaFilter] = useState<string>('todas');
 
   // Filtros globales (visibles en todas las secciones)
   const [periodo, setPeriodo] = useState<string>("2025-02");
@@ -216,10 +220,31 @@ export default function IESDashboard() {
 
   return (
     <div className="min-h-screen w-full p-6 md:p-10 space-y-6 bg-[#f6f6f6] text-[#4a5570]">
-      {/* Header with Title */}
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight">PTIES – Dashboard IES</h1>
-        <p className="text-sm text-[#4a5570]/70">Resumen + secciones de detalle (Estudiantes, Docentes, Gobernanza, Bienestar, Alertas)</p>
+      {/* Header with Title and View Navigation */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        {/* Title Section - Half Space */}
+        <div className="flex-1">
+          <h1 className="text-3xl font-semibold tracking-tight">PTIES – Dashboard IES</h1>
+          <p className="text-sm text-[#4a5570]/70">Resumen + secciones de detalle (Estudiantes, Docentes, Gobernanza, Bienestar, Alertas)</p>
+        </div>
+
+        {/* View Navigation - Half Space */}
+        <div className="flex-1">
+          <div className="flex flex-wrap gap-2 justify-start md:justify-end">
+            {[
+              { id: "resumen", label: "Resumen" },
+              { id: "estudiantes", label: "Estudiantes" },
+              { id: "docentes", label: "Docentes" },
+              { id: "gobernanza", label: "Gobernanza/Entregables" },
+              { id: "bienestar", label: "Bienestar" },
+              { id: "alertas", label: "Alertas" },
+            ].map((t) => (
+              <Button key={t.id} onClick={() => setTab(t.id)} className={`rounded-2xl ${tab===t.id?"bg-[#4a5570] text-white":"bg-white border text-[#4a5570]"}`}>
+                {t.label}
+              </Button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Global Filters */}
@@ -272,23 +297,61 @@ export default function IESDashboard() {
               </SelectContent>
             </Select>
           </div>
-        </div>
-      </div>
 
-      {/* Navegación simple */}
-      <div className="flex flex-wrap gap-2">
-        {[
-          { id: "resumen", label: "Resumen" },
-          { id: "estudiantes", label: "Estudiantes" },
-          { id: "docentes", label: "Docentes" },
-          { id: "gobernanza", label: "Gobernanza/Entregables" },
-          { id: "bienestar", label: "Bienestar" },
-          { id: "alertas", label: "Alertas" },
-        ].map((t) => (
-          <Button key={t.id} onClick={() => setTab(t.id)} className={`rounded-2xl ${tab===t.id?"bg-[#4a5570] text-white":"bg-white border text-[#4a5570]"}`}>
-            {t.label}
-          </Button>
-        ))}
+          {/* IES Filter */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-[#4a5570]/70">IES:</label>
+            <Select value={iesFilter} onValueChange={setIesFilter}>
+              <SelectTrigger className="w-36">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="relative z-[9999] bg-white shadow-lg border">
+                <SelectItem value="todas">Todas las IES</SelectItem>
+                <SelectItem value="universidad-nacional">Universidad Nacional</SelectItem>
+                <SelectItem value="universidad-antioquia">Universidad de Antioquia</SelectItem>
+                <SelectItem value="universidad-valle">Universidad del Valle</SelectItem>
+                <SelectItem value="universidad-javeriana">Universidad Javeriana</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Municipio Filter */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-[#4a5570]/70">Municipio:</label>
+            <Select value={municipioFilter} onValueChange={setMunicipioFilter}>
+              <SelectTrigger className="w-36">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="relative z-[9999] bg-white shadow-lg border">
+                <SelectItem value="todos">Todos los municipios</SelectItem>
+                <SelectItem value="bogota">Bogotá</SelectItem>
+                <SelectItem value="medellin">Medellín</SelectItem>
+                <SelectItem value="cali">Cali</SelectItem>
+                <SelectItem value="barranquilla">Barranquilla</SelectItem>
+                <SelectItem value="cartagena">Cartagena</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Competencia Filter */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-[#4a5570]/70">Competencia:</label>
+            <Select value={competenciaFilter} onValueChange={setCompetenciaFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="relative z-[9999] bg-white shadow-lg border">
+                <SelectItem value="todas">Todas las competencias</SelectItem>
+                <SelectItem value="matematicas">Matemáticas</SelectItem>
+                <SelectItem value="lenguaje">Lenguaje</SelectItem>
+                <SelectItem value="ciencias-naturales">Ciencias Naturales</SelectItem>
+                <SelectItem value="ciencias-sociales">Ciencias Sociales</SelectItem>
+                <SelectItem value="socioemocional">Socioemocional</SelectItem>
+                <SelectItem value="ingles">Inglés</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </div>
 
       {/* ---- RESUMEN (Landing) ---- */}
@@ -479,34 +542,9 @@ export default function IESDashboard() {
           {/* Tabla: Estudiantes (promedios y componentes) */}
           <Card className="rounded-2xl">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-[#4a5570]">Resumen por estudiante</CardTitle>
-                  <CardDescription>Asistencia promedio y puntajes por componente</CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Select value={iesFiltro} onValueChange={setIesFiltro}>
-                    <SelectTrigger className="w-40"><SelectValue placeholder="IES" /></SelectTrigger>
-                    <SelectContent>
-                      {iesList.map((i) => (<SelectItem key={i} value={i}>{i}</SelectItem>))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={municipioFiltro} onValueChange={setMunicipioFiltro}>
-                    <SelectTrigger className="w-40"><SelectValue placeholder="Municipio" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Todos">Todos</SelectItem>
-                      {municipios.map((m) => (<SelectItem key={m} value={m}>{m}</SelectItem>))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={generoFiltro} onValueChange={setGeneroFiltro}>
-                    <SelectTrigger className="w-32"><SelectValue placeholder="Género" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Todos">Todos</SelectItem>
-                      <SelectItem value="F">F</SelectItem>
-                      <SelectItem value="M">M</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div>
+                <CardTitle className="text-[#4a5570]">Resumen por estudiante</CardTitle>
+                <CardDescription>Asistencia promedio y puntajes por componente</CardDescription>
               </div>
             </CardHeader>
             <CardContent>
@@ -609,33 +647,9 @@ export default function IESDashboard() {
           {/* Nueva tabla: Asistencia por estudiante (actividades) */}
           <Card className="rounded-2xl">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-[#4a5570]">Asistencia por estudiante (actividades)</CardTitle>
-                  <CardDescription>Clases y otras actividades · Competencia relacionada</CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Select value={tipoActividad} onValueChange={setTipoActividad}>
-                    <SelectTrigger className="w-36"><SelectValue placeholder="Tipo" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Todas">Todas</SelectItem>
-                      <SelectItem value="Clase">Clase</SelectItem>
-                      <SelectItem value="Taller">Taller</SelectItem>
-                      <SelectItem value="Extracurricular">Extracurricular</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={compAsis} onValueChange={setCompAsis}>
-                    <SelectTrigger className="w-44"><SelectValue placeholder="Competencia" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Todas">Todas</SelectItem>
-                      <SelectItem value="Matemáticas">Matemáticas</SelectItem>
-                      <SelectItem value="Lenguaje">Lenguaje</SelectItem>
-                      <SelectItem value="Socioemocional">Socioemocional</SelectItem>
-                      <SelectItem value="-">Sin relación</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button className="rounded-2xl bg-[#4a5570] text-white" onClick={() => alert("Descargando raw data (simulado)...")}>Descargar raw data</Button>
-                </div>
+              <div>
+                <CardTitle className="text-[#4a5570]">Asistencia por estudiante (actividades)</CardTitle>
+                <CardDescription>Clases y otras actividades · Competencia relacionada</CardDescription>
               </div>
             </CardHeader>
             <CardContent>
@@ -711,6 +725,57 @@ export default function IESDashboard() {
       {/* ---- GOBERNANZA / ENTREGABLES ---- */}
       {tab === "gobernanza" && (
         <div className="space-y-6">
+          {/* File Upload Links */}
+          <Card className="rounded-2xl">
+            <CardHeader>
+              <CardTitle className="text-[#4a5570]">Gestión de Documentos</CardTitle>
+              <CardDescription>Subir y gestionar documentos del programa</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Link 
+                  to="/upload/asistencia" 
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-[#4a5570] hover:bg-[#4a5570]/5 transition-colors"
+                >
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-[#4a5570]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                      <Users className="w-6 h-6 text-[#4a5570]" />
+                    </div>
+                    <h3 className="font-medium text-[#4a5570] mb-1">Asistencia</h3>
+                    <p className="text-sm text-[#4a5570]/70">Subir reportes de asistencia</p>
+                  </div>
+                </Link>
+
+                <Link 
+                  to="/upload/plan-accion" 
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-[#4a5570] hover:bg-[#4a5570]/5 transition-colors"
+                >
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-[#4a5570]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                      <ClipboardList className="w-6 h-6 text-[#4a5570]" />
+                    </div>
+                    <h3 className="font-medium text-[#4a5570] mb-1">Plan de Acción y Actividades</h3>
+                    <p className="text-sm text-[#4a5570]/70">Subir planes de acción</p>
+                  </div>
+                </Link>
+
+                <Link 
+                  to="/upload/educacion-evaluaciones" 
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-[#4a5570] hover:bg-[#4a5570]/5 transition-colors"
+                >
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-[#4a5570]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                      <School className="w-6 h-6 text-[#4a5570]" />
+                    </div>
+                    <h3 className="font-medium text-[#4a5570] mb-1">Educación y Evaluaciones</h3>
+                    <p className="text-sm text-[#4a5570]/70">Subir planes educativos y evaluaciones</p>
+                  </div>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Existing Entregables Table */}
           <Card className="rounded-2xl">
             <CardHeader>
               <CardTitle className="text-[#4a5570]">Entregables</CardTitle>
