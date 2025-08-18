@@ -6,7 +6,7 @@ import { Input } from "../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Progress } from "../components/ui/progress";
 import { AlertCircle, Calendar, Map as MapIcon, FileText, Activity, School, Users, Building, AlertTriangle, TrendingUp, ClipboardList } from "lucide-react";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 // --- Dummy data ---
 const kpis = [
@@ -42,18 +42,6 @@ const iesCompliance = [
   { ies: "IES Llanos", entregables: 12, entregados: 6, asistencia: 65, estado: "Crítico" },
 ];
 
-const permanenciaData = [
-  { mes: "Ene", pct: 96 },
-  { mes: "Feb", pct: 95 },
-  { mes: "Mar", pct: 94 },
-  { mes: "Abr", pct: 94 },
-];
-
-const transicionData = [
-  { name: "Transitan", value: 38 },
-  { name: "No Transitan", value: 62 },
-];
-
 const bienestarData = [
   { servicio: "Psicológico", pct: 31 },
   { servicio: "Mentorías", pct: 44 },
@@ -65,12 +53,6 @@ const alerts = [
   { level: "alto", text: "IES Llanos: 50% de entregables vencidos." },
   { level: "medio", text: "Municipio 12: asistencia familiar < 40%." },
   { level: "bajo", text: "IES Pacífico: retraso en plan de bienestar." },
-];
-
-const reports = [
-  { name: "Informe parcial docentes – Q1", date: "2025-03-31" },
-  { name: "Diagnóstico estudiantes (base de datos)", date: "2025-02-15" },
-  { name: "Entrega plan de trabajo acordado", date: "2025-01-20" },
 ];
 
 export function pct(n: number, d: number) {
