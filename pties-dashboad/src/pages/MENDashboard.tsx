@@ -61,9 +61,6 @@ export function pct(n: number, d: number) {
 }
 
 export default function MENDashboard() {
-  // View navigation state
-  const [activeView, setActiveView] = useState<string>('dashboard');
-  
   const [bubbleMetric, setBubbleMetric] = useState<BubbleMetric>('students');
   const [sexFilter, setSexFilter] = useState<string>('todos');
   const [regionFilter, setRegionFilter] = useState<string>('todas');
@@ -101,33 +98,11 @@ export default function MENDashboard() {
 
   return (
     <div className="min-h-screen w-full p-6 md:p-10 space-y-6 bg-[#f6f6f6] text-[#4a5570]">
-      {/* Header with Title and View Navigation */}
+      {/* Header with Title */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        {/* Title Section - Half Space */}
         <div className="flex-1">
           <h1 className="text-3xl font-semibold tracking-tight">PTIES – MEN Dashboard Global </h1>
           <p className="text-sm text-[#4a5570]/70">Visión global del programa, riesgos y resultados. (Ejemplo UI)</p>
-        </div>
-
-        {/* View Navigation - Half Space */}
-        <div className="flex-1">
-          <div className="flex flex-wrap gap-2 justify-start md:justify-end">
-            {[
-              { id: "dashboard", label: "Dashboard" },
-              { id: "programas", label: "Programas" },
-              { id: "regiones", label: "Regiones" },
-              { id: "ies", label: "IES" },
-              { id: "reportes", label: "Reportes" },
-            ].map((view) => (
-              <Button 
-                key={view.id} 
-                onClick={() => setActiveView(view.id)} 
-                className={`rounded-2xl ${activeView === view.id ? "bg-[#4a5570] text-white" : "bg-white border text-[#4a5570]"}`}
-              >
-                {view.label}
-              </Button>
-            ))}
-          </div>
         </div>
       </div>
 
