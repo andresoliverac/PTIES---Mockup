@@ -4,11 +4,13 @@ import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, FolderOpen, Upload, FileText, Calendar, ClipboardList, Search, Download, CheckCircle, Clock, AlertTriangle, CalendarDays, BookOpen, Users, Stethoscope, FileCheck, MoreHorizontal, Grid3X3 } from "lucide-react";
 import { parseCSV, csvData, type Deliverable } from "../utils/csvData";
 
 export default function GestionDocumentos() {
+  const navigate = useNavigate();
+  
   // Parse CSV data
   const deliverables: Deliverable[] = useMemo(() => parseCSV(csvData), []);
 
@@ -61,21 +63,77 @@ export default function GestionDocumentos() {
 
   // Helper function to handle category badge clicks
   const handleCategoryBadgeClick = (categoryKey: string) => {
-    if (categoryKey === 'plan-accion') {
-      window.open('/upload/plan-accion', '_blank');
-    } else if (categoryKey === 'plan-estudios') {
-      window.open('/upload/educacion-evaluaciones', '_blank');
+    // All category badges should just filter the table
+    handleCategoriaFilter(categoryKey);
+  };
+
+  // Helper function to get the actual Estado column value
+  const getEstadoValue = (deliverable: Deliverable) => {
+    // Check if delivery date is in the future
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    try {
+      if (deliverable.fechaEntrega && deliverable.fechaEntrega.trim()) {
+        const deliveryDate = new Date(deliverable.fechaEntrega);
+        deliveryDate.setHours(0, 0, 0, 0);
+        if (!isNaN(deliveryDate.getTime()) && deliveryDate > today) {
+          return "Próximo";
+        }
+      }
+    } catch (error) {
+      // Continue with normal logic if date parsing fails
+    }
+    
+    // Normal logic for current/past dates
+    if (deliverable.necesitaRevision && deliverable.necesitaRevision.toLowerCase() === "x") {
+      return "Pendiente";
     } else {
-      // For other categories, just filter the table
-      handleCategoriaFilter(categoryKey);
+      return "Completo";
     }
   };
 
-  // Helper function to determine document status
+  // Helper function to determine document status (for backwards compatibility and future use)
   const getDocumentStatus = (deliverable: Deliverable) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
+    
+    // Parse the delivery date - handle the format "d-MMM-yy"
+    let deliveryDate: Date | null = null;
+    try {
+      if (deliverable.fechaEntrega && deliverable.fechaEntrega.trim()) {
+        deliveryDate = new Date(deliverable.fechaEntrega);
+        deliveryDate.setHours(0, 0, 0, 0);
+        
+        // Check if date is valid
+        if (isNaN(deliveryDate.getTime())) {
+          deliveryDate = null;
+        }
+      }
+    } catch (error) {
+      deliveryDate = null;
+    }
+    
+    // Use Estado column logic for status
+    const estadoValue = getEstadoValue(deliverable);
+    
+    // If already approved, it's completed
     if (deliverable.aprobado === "Sí") return "completed";
+    
+    // If explicitly rejected, it's late (needs rework)
     if (deliverable.aprobado === "No") return "late";
-    if (deliverable.necesitaRevision && deliverable.necesitaRevision.toLowerCase() === "x") return "in-revision";
+    
+    // If Estado is Pendiente and date has passed, it's late
+    if (estadoValue === "Pendiente") {
+      if (deliveryDate && deliveryDate < today) return "late";
+      return "in-revision";
+    }
+    
+    // If Estado is Completo but not approved yet, check date
+    if (estadoValue === "Completo") {
+      if (deliveryDate && deliveryDate < today) return "late";
+      return "upcoming";
+    }
+    
     return "upcoming";
   };
 
@@ -97,17 +155,15 @@ export default function GestionDocumentos() {
   // Calculate summary statistics
   const summaryStats = useMemo(() => {
     const total = deliverables.length;
-    const completed = deliverables.filter(d => d.aprobado === "Sí").length;
-    const inRevision = deliverables.filter(d => d.necesitaRevision && d.necesitaRevision.toLowerCase() === "x").length;
-    const late = deliverables.filter(d => d.aprobado === "No").length;
-    const upcoming = total - completed - late - inRevision;
+    const completos = deliverables.filter(d => getEstadoValue(d) === "Completo").length;
+    const pendientes = deliverables.filter(d => getEstadoValue(d) === "Pendiente").length;
+    const proximos = deliverables.filter(d => getEstadoValue(d) === "Próximo").length;
 
     return [
       { id: "total", label: "Total de Documentos", value: total, color: "bg-blue-50 text-blue-600", icon: FileText },
-      { id: "completed", label: "Completados", value: completed, color: "bg-green-50 text-green-600", icon: CheckCircle },
-      { id: "in-revision", label: "En Revisión", value: inRevision, color: "bg-amber-50 text-amber-600", icon: Clock },
-      { id: "late", label: "Atrasados", value: late, color: "bg-red-50 text-red-600", icon: AlertTriangle },
-      { id: "upcoming", label: "Próximos", value: upcoming, color: "bg-purple-50 text-purple-600", icon: CalendarDays }
+      { id: "completos", label: "Completos", value: completos, color: "bg-green-50 text-green-600", icon: CheckCircle },
+      { id: "pendientes", label: "Pendientes", value: pendientes, color: "bg-amber-50 text-amber-600", icon: Clock },
+      { id: "proximos", label: "Próximos", value: proximos, color: "bg-purple-50 text-purple-600", icon: CalendarDays }
     ];
   }, [deliverables]);
 
@@ -123,14 +179,13 @@ export default function GestionDocumentos() {
       const matchesSearch = filters.searchTerm === "" || 
         deliverable.nombreEntregable.toLowerCase().includes(filters.searchTerm.toLowerCase());
       
-      // Status filter from summary cards
-      const documentStatus = getDocumentStatus(deliverable);
+      // Status filter from summary cards - align with Estado column
+      const estadoValue = getEstadoValue(deliverable);
       const matchesStatus = filters.statusFilter === "todos" || 
         (filters.statusFilter === "total") ||
-        (filters.statusFilter === "completed" && documentStatus === "completed") ||
-        (filters.statusFilter === "in-revision" && documentStatus === "in-revision") ||
-        (filters.statusFilter === "late" && documentStatus === "late") ||
-        (filters.statusFilter === "upcoming" && documentStatus === "upcoming");
+        (filters.statusFilter === "completos" && estadoValue === "Completo") ||
+        (filters.statusFilter === "pendientes" && estadoValue === "Pendiente") ||
+        (filters.statusFilter === "proximos" && estadoValue === "Próximo");
 
       // Date range filter
       const matchesDateRange = isDateInRange(deliverable.fechaEntrega, filters.dateRange.start, filters.dateRange.end);
@@ -500,10 +555,9 @@ export default function GestionDocumentos() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="todos">Todos</SelectItem>
-                            <SelectItem value="Pendiente">Pendiente</SelectItem>
-                            <SelectItem value="En Revisión">En Revisión</SelectItem>
-                            <SelectItem value="Completado">Completado</SelectItem>
-                            <SelectItem value="Retrasado">Retrasado</SelectItem>
+                            <SelectItem value="pendientes">Pendiente</SelectItem>
+                            <SelectItem value="completos">Completo</SelectItem>
+                            <SelectItem value="proximos">Próximo</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -566,12 +620,21 @@ export default function GestionDocumentos() {
                       </td>
                       <td className="p-5 text-sm text-[#4a5570]/80">{deliverable.fechaEntrega || '-'}</td>
                       <td className="p-5">
-                        <Badge 
-                          variant={deliverable.necesitaRevision && deliverable.necesitaRevision.toLowerCase() === "x" ? "destructive" : "default"}
-                          className={deliverable.necesitaRevision && deliverable.necesitaRevision.toLowerCase() === "x" ? "bg-orange-100 text-orange-800" : "bg-green-100 text-green-800"}
-                        >
-                          {deliverable.necesitaRevision && deliverable.necesitaRevision.toLowerCase() === "x" ? "Pendiente" : "Completo"}
-                        </Badge>
+                        {(() => {
+                          const estadoValue = getEstadoValue(deliverable);
+                          return (
+                            <Badge 
+                              variant={estadoValue === "Pendiente" ? "destructive" : estadoValue === "Próximo" ? "secondary" : "default"}
+                              className={
+                                estadoValue === "Pendiente" ? "bg-orange-100 text-orange-800" : 
+                                estadoValue === "Próximo" ? "bg-purple-100 text-purple-800" : 
+                                "bg-green-100 text-green-800"
+                              }
+                            >
+                              {estadoValue}
+                            </Badge>
+                          );
+                        })()}
                       </td>
                       <td className="p-5">
                         <Badge 
@@ -586,6 +649,21 @@ export default function GestionDocumentos() {
                           <Button 
                             size="sm" 
                             className="bg-[#4a5570] hover:bg-[#3a4560] text-white"
+                            onClick={() => {
+                              const categoryKey = getDocumentCategory(deliverable);
+                              if (categoryKey === 'plan-accion') {
+                                navigate('/upload/plan-accion');
+                              } else if (categoryKey === 'plan-estudios') {
+                                navigate('/upload/plan-educacion');
+                              } else if (categoryKey === 'asistencia') {
+                                navigate('/upload/asistencia');
+                              } else if (categoryKey === 'evaluaciones') {
+                                navigate('/upload/educacion-evaluaciones');
+                              } else {
+                                // For other categories, could add more upload pages or show a message
+                                console.log('No upload page configured for category:', categoryKey);
+                              }
+                            }}
                           >
                             <Upload className="w-4 h-4 mr-1" />
                             Subir

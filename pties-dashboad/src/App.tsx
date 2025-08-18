@@ -7,6 +7,7 @@ import GestionActividades from "./pages/GestionActividades";
 import MENDashboard from "./pages/MENDashboard";
 import AsistenciaUpload from "./pages/upload/AsistenciaUpload";
 import PlanAccionUpload from "./pages/upload/PlanAccionUpload";
+import PlanEducacionUpload from "./pages/upload/PlanEducacionUpload";
 import EducacionEvaluacionesUpload from "./pages/upload/EducacionEvaluacionesUpload";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/men-global" element={<MENDashboard />} />
           <Route path="/upload/asistencia" element={<AsistenciaUpload />} />
           <Route path="/upload/plan-accion" element={<PlanAccionUpload />} />
+          <Route path="/upload/plan-educacion" element={<PlanEducacionUpload />} />
           <Route path="/upload/educacion-evaluaciones" element={<EducacionEvaluacionesUpload />} />
         </Routes>
       </div>
