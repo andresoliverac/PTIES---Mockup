@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import SNIESHeader from "./components/SNIESHeader";
 import IESLanding from "./pages/IESLanding";
 import IESDashboard from "./pages/IESDashboard";
@@ -16,7 +16,8 @@ function App() {
       <div className="min-h-screen bg-[#f6f6f6]">
         <SNIESHeader />
         <Routes>
-          <Route path="/" element={<IESLanding />} />
+          <Route path="/" element={<Navigate to="/men-global" replace />} />
+          <Route path="/ies-landing" element={<IESLanding />} />
           <Route path="/ies-dashboard" element={<IESDashboard />} />
           <Route path="/gestion-documentos" element={<GestionDocumentos />} />
           <Route path="/gestion-actividades" element={<GestionActividades />} />

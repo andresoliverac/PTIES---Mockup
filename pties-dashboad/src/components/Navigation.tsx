@@ -12,10 +12,10 @@ export default function Navigation() {
           <h1 className="text-xl font-semibold text-[#4a5570]">PTIES Dashboard</h1>
         </div>
         <div className="flex items-center space-x-2">
-          <Link to="/">
+          <Link to="/ies-landing">
             <Button 
-              variant={location.pathname === "/" ? "default" : "ghost"}
-              className={location.pathname === "/" ? "bg-[#4a5570] text-white" : "text-[#4a5570]"}
+              variant={location.pathname === "/ies-landing" ? "default" : "ghost"}
+              className={location.pathname === "/ies-landing" ? "bg-[#4a5570] text-white" : "text-[#4a5570]"}
             >
               <Building className="w-4 h-4 mr-2" />
               Dashboard IES

@@ -167,7 +167,7 @@ export default function GestionActividades() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-4">
-          <Link to="/">
+          <Link to="/ies-landing">
             <Button variant="outline" className="rounded-2xl border-[#4a5570] text-[#4a5570]">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver

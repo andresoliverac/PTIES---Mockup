@@ -252,7 +252,7 @@ export default function GestionDocumentos() {
     <div className="min-h-screen w-full p-6 md:p-10 space-y-6 bg-[#f6f6f6] text-[#4a5570]">
       {/* Header with Back Button */}
       <div className="flex items-center gap-4">
-        <Link to="/" className="flex items-center gap-2 text-[#4a5570] hover:text-[#3a4560]">
+        <Link to="/ies-landing" className="flex items-center gap-2 text-[#4a5570] hover:text-[#3a4560]">
           <ArrowLeft className="w-5 h-5" />
           <span>Volver al IES</span>
         </Link>
